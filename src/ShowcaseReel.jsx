@@ -126,31 +126,42 @@ const TypingEffect = ({ text, speed = 100 }) => {
 
 /**
  * SearchSimulation Component
- * จำลองช่องค้นหาเพื่อให้เห็นภาพการพิมพ์
+ * จำลองช่องค้นหาที่ดูสมจริงและน่ารักขึ้น
  */
 const SearchSimulation = ({ text, label = "Quick Search" }) => (
   <div className="flex flex-col items-center gap-4">
     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8C7E6A] opacity-50">{label}</span>
-    <div className="bg-white border-2 border-[#F3DCC1] rounded-[32px] px-8 py-5 flex items-center gap-5 w-[450px] shadow-xl">
-      <span className="text-2xl opacity-30">🔍</span>
-      <div className="text-3xl font-light tracking-tight text-[#1A1A1A] lowercase">
+    <div className="bg-white border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-1 bg-[#F4A460]/10" />
+      <motion.span 
+        animate={{ scale: [1, 1.2, 1] }} 
+        transition={{ repeat: Infinity, duration: 2 }}
+        className="text-2xl opacity-30"
+      >
+        🔍
+      </motion.span>
+      <div className="text-3xl font-light tracking-tight text-[#1A1A1A] lowercase flex-1">
         <TypingEffect text={text} speed={80} />
       </div>
-      <div className="ml-auto w-[2px] h-8 bg-[#F4A460] animate-pulse"></div>
+      <motion.div 
+        animate={{ opacity: [1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.8 }}
+        className="w-[2px] h-8 bg-[#F4A460]" 
+      />
     </div>
   </div>
 );
 
 /**
  * MouseCursor Component
- * จำลองลูกศรเม้าส์ที่ขยับไปมา
+ * จำลองลูกศรเม้าส์ที่มีป้ายกำกับบอกการกระทำ
  */
-const MouseCursor = ({ target }) => (
+const MouseCursor = ({ target, label }) => (
   <motion.div
     animate={target}
     initial={{ x: '90vw', y: '90vh', opacity: 0 }}
-    transition={{ type: "spring", stiffness: 60, damping: 20 }}
-    className="fixed z-[11000] pointer-events-none"
+    transition={{ type: "spring", stiffness: 50, damping: 20 }}
+    className="fixed z-[11000] pointer-events-none flex items-start"
   >
     <motion.svg 
       animate={target.click ? { scale: [1, 0.8, 1] } : {}}
@@ -165,6 +176,19 @@ const MouseCursor = ({ target }) => (
         />
       )}
     </motion.svg>
+    <AnimatePresence>
+      {label && (
+        <motion.div
+          initial={{ opacity: 0, x: -10, scale: 0.8 }}
+          animate={{ opacity: 1, x: 10, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="bg-[#1A1A1A] text-[#FFF9F0] text-[9px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2"
+        >
+          <span className="w-1.5 h-1.5 bg-[#F4A460] rounded-full animate-pulse" />
+          {label}
+        </motion.div>
+      )}
+    </AnimatePresence>
   </motion.div>
 );
 
@@ -181,6 +205,7 @@ const SCENES = [
     type: 'simulate-search',
     text: 'shizuka',
     cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursorLabel: 'Searching for friends...',
     duration: 3000
   },
 
@@ -189,6 +214,7 @@ const SCENES = [
     type: 'preview-dual-character', 
     charIds: ['shizuka', 'doraemon'],
     cursor: { x: '35vw', y: '45vh', opacity: 1, click: true },
+    cursorLabel: 'Click to see favorites',
     duration: 5000 
   },
   
@@ -198,6 +224,7 @@ const SCENES = [
     text: 'ร้านตีเหล็ก',
     label: 'Checking Shop Hours',
     cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursorLabel: 'Find shops...',
     duration: 3000
   },
 
@@ -205,6 +232,7 @@ const SCENES = [
     type: 'preview-dual-shop',
     shopIds: ['blacksmith', 'general_store'],
     cursor: { x: '65vw', y: '45vh', opacity: 1, click: true },
+    cursorLabel: 'Open schedule',
     duration: 5000
   },
 
@@ -214,6 +242,7 @@ const SCENES = [
     text: 'strawberry',
     label: 'Crop Profit Analysis',
     cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursorLabel: 'Calculating profit...',
     duration: 3000
   },
 
@@ -221,6 +250,7 @@ const SCENES = [
     type: 'preview-dual-crop', 
     cropIds: ['cabbage', 'strawberry'],
     cursor: { x: '65vw', y: '55vh', opacity: 1, click: true },
+    cursorLabel: 'Comparing yields',
     duration: 5000 
   },
   
@@ -229,6 +259,7 @@ const SCENES = [
     type: 'preview-dual-calendar',
     events: [{ seasonId: 'spring', eventDay: 8 }, { seasonId: 'winter', eventDay: 25 }],
     cursor: { x: '50vw', y: '60vh', opacity: 1, click: true },
+    cursorLabel: 'Mark the date!',
     duration: 5000 
   },
 
@@ -238,6 +269,7 @@ const SCENES = [
     text: 'dorayaki',
     label: 'Recipe Secret Guide',
     cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursorLabel: 'Cooking time...',
     duration: 3000
   },
 
@@ -245,12 +277,13 @@ const SCENES = [
     type: 'preview-dual-modal', 
     recipeIds: ['dorayaki', 'curry'], 
     cursor: { x: '35vw', y: '50vh', opacity: 1, click: true },
+    cursorLabel: 'Reveal ingredients',
     duration: 5000 
   },
 
   // --- Final Text Scenes ---
-  { type: 'text', content: 'ข้อมูลครบถ้วน แม่นยำ', duration: 2000 },
-  { type: 'text', content: 'อัปเดตตลอดเวลา', duration: 2000 },
+  { type: 'text', content: 'ข้อมูลครบถ้วน แม่นยำ', duration: 2000, bgIcon: '📚' },
+  { type: 'text', content: 'อัปเดตตลอดเวลา', duration: 2000, bgIcon: '✨' },
   { type: 'text', content: 'ดีไซน์มินิมอล ใช้งานง่าย', duration: 2000 },
 
   // Final CTA
@@ -733,6 +766,15 @@ const ShowcaseReel = ({ onFinish }) => {
 
         {scene.type === 'text' && (
           <motion.div key={`text-${currentScene}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 1.2 }} className="text-center relative z-10">
+            {scene.bgIcon && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 0.05, scale: 1.5 }}
+                className="absolute inset-0 -z-10 flex items-center justify-center text-[20rem] select-none pointer-events-none"
+              >
+                {scene.bgIcon}
+              </motion.div>
+            )}
             <h3 className="text-4xl md:text-6xl text-[#5D4037] font-black lowercase tracking-tighter">
               <TypingEffect text={scene.content} speed={50} />
             </h3>
