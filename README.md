@@ -1,16 +1,23 @@
-# React + Vite
+# Doraemon Story of Seasons Wiki 🐱🌾
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+เว็บไซต์รวบรวมข้อมูลและเครื่องมือสำหรับเกม Doraemon Story of Seasons พัฒนาด้วย React และ Tailwind CSS
 
-Currently, two official plugins are available:
+## ✨ คุณสมบัติ (Features)
+- ข้อมูลไอเทมและตัวละคร
+- เครื่องมือช่วยคำนวณภายในเกม
+- รองรับการบันทึกหน้าจอเป็นรูปภาพด้วย `html2canvas`
+- Animation ลื่นไหลด้วย `Framer Motion`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 เทคโนโลยีที่ใช้ (Tech Stack)
+- **Frontend:** React 19, Vite
+- **Styling:** Tailwind CSS
+- **Animation:** Framer Motion
+- **Utilities:** clsx, tailwind-merge
 
-## React Compiler
+## 🛠️ การติดตั้งและรันโปรเจกต์
+1. คลอนโปรเจกต์: `git clone https://github.com/apst147-lgtm/doraemon-sos-wiki.git`
+2. ติดตั้ง dependencies: `npm install`
+3. รันในโหมดพัฒนา: `npm run dev`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📄 สัญญาอนุญาต (License)
+โปรเจกต์นี้สร้างขึ้นเพื่อการศึกษา ข้อมูลในเกมเป็นลิขสิทธิ์ของบริษัทผู้พัฒนาเกม
