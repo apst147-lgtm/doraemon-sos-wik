@@ -726,7 +726,82 @@ const RecipesPage = ({ onBack, initialSearch = '' }) => {
         </div>
       </div>
 
-      {/* Aggregate Summary Panel - Floating at bottom */}
+      {/* Aggregate Summary Panel - 
+        {summaryData && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl"
+          >
+            <div ref={summaryRef} className="bg-[#1A1A1A]/95 backdrop-blur-xl text-white rounded-[32px] shadow-2xl p-6 md:p-8 border border-white/10 ring-1 ring-white/10">
+              <div className="flex flex-col lg:flex-row gap-10">
+                {/* ส่วนรายการวัตถุดิบ */}
+                <div className="flex-[1.5]">
+                  <div className="flex justify-between items-center mb-6">
+                    <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F4A460]">Shopping List ({summaryData.count} เมนู)</h5>
+                    <div className="flex gap-4 items-center">
+                      <button onClick={exportAsImage} className="text-[9px] font-black text-[#82A07D] border border-[#82A07D]/30 px-3 py-1 rounded-lg hover:bg-[#82A07D] hover:text-white transition-all">
+                        📷 Export Image
+                      </button>
+                      <button onClick={() => setSelectedIds([])} className="text-[9px] font-black text-white/30 hover:text-[#E94E4E] transition-colors">
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                    {summaryData.ingredients.map(ing => (
+                      <div key={ing.name} className="flex items-center gap-3 bg-white/5 border border-white/10 px-3 py-2 rounded-2xl">
+                        <span className="text-xl">{INGREDIENT_ICONS[ing.name] || '📦'}</span>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-black text-white/90">{ing.name}</span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[8px] font-bold text-[#F4A460]">ต้องใช้: {ing.requiredQty}</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[8px] font-bold text-white/20 uppercase">มีแล้ว:</span>
+                              <input 
+                                type="number"
+                                value={ing.haveQty}
+                                onChange={(e) => updateInventory(ing.name, e.target.value)}
+                                className="w-8 bg-white/10 border-none rounded text-[10px] text-center py-0"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ส่วนสรุปตัวเลขกำไร */}
+                <div className="lg:w-64 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-8">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-[9px] font-bold uppercase text-white/40">
+                      <span>Total Cost</span>
+                      <span className="text-white">{summaryData.totalCost.toLocaleString()} G</span>
+                    </div>
+                    <div className="flex justify-between text-[9px] font-bold uppercase text-white/40">
+                      <span>Market Value</span>
+                      <span className="text-white">{summaryData.totalSell.toLocaleString()} G</span>
+                    </div>
+                  </div>
+                  <div className="mt-8 pt-4 border-t border-white/10">
+                    <span className="text-[9px] font-black uppercase text-[#82A07D]">Total Profit</span>
+                    <div className={cn(
+                      "text-3xl font-black tracking-tighter mt-1",
+                      summaryData.totalProfit >= 0 ? "text-[#82A07D]" : "text-[#E94E4E]"
+                    )}>
+                      {summaryData.totalProfit >= 0 ? '+' : ''}{summaryData.totalProfit.toLocaleString()} G
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* รายละเอียดเมนู Modal */}
       <RecipeDetailModal 
         selectedRecipe={selectedRecipe} 
         onClose={() => setSelectedRecipe(null)} 
