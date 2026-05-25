@@ -2,8 +2,8 @@
   "name": "doraemon-sos-wiki",
   "private": true,
   "version": "0.0.0",
-  "repository": "https://github.com/apst147-lgtm/doraemon-sos-wiki.git",
-  "homepage": "https://apst147-lgtm.github.io/doraemon-sos-wiki",
+  "repository": "https://github.com/apst147-lgtm/doraemon-sos-wik.git",
+  "homepage": "https://apst147-lgtm.github.io/doraemon-sos-wik",
   "type": "module",
   "scripts": {
     "dev": "vite",
