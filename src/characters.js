@@ -47,7 +47,7 @@ export const CHARACTERS = [
     portrait: '👦🏻',
     favoriteItems: ['ไม้ธรรมดา', 'สตูว์', 'แมลงตั๊กแตน'],
     specialFavorite: 'แกงกะหรี่',
-    dislikedItems: ['ขยะ'],
+    dislikedItems: ['ของป่าที่เก็บจากพื้น', 'ขยะ'],
     birthday: '15 ฤดูร้อน',
     location: 'ร้านตีเหล็ก'
   },
@@ -58,8 +58,10 @@ export const CHARACTERS = [
     color: '#6BCBFF',
     bio: 'หุ่นยนต์แมวตัวกลมเหมือนขนมไดฟูกุ เขายอมแลกของวิเศษทุกชิ้นเพื่อให้ได้ลิ้มรสความหอมหวานของแป้งทอดโดรายากิ',
     portrait: '🐱',
-    favoriteItems: ['โดรายากิ', 'ซุปข้าวโพด', 'ดอกทานตะวัน'],
-    birthday: '28 ฤดูใบไม้ผลิ', // 28 พฤษภาคม
+    favoriteItems: ['ซุปข้าวโพด', 'ดอกทานตะวัน'],
+    specialFavorite: 'โดรายากิ',
+    dislikedItems: ['ขยะ', 'ของป่า'],
+    birthday: '28 ฤดูใบไม้ผลิ',
     location: 'ที่ว่าการเมือง'
   },
   {
@@ -69,8 +71,10 @@ export const CHARACTERS = [
     color: '#FFCCB3',
     bio: 'ราชาแห่งครัวเดลิซ ผู้เปลี่ยนวัตถุดิบดิบจากฟาร์มให้กลายเป็นงานศิลปะที่ทานได้ด้วยพรสวรรค์และไฟในหัวใจ',
     portrait: '👨‍🍳',
-    favoriteItems: ['กราแตง', 'พิซซ่า', 'กะหล่ำดอก'],
-    birthday: '17 ฤดูหนาว', // 17 มกราคม
+    favoriteItems: ['พิซซ่า', 'กะหล่ำดอก'],
+    specialFavorite: 'กราแตง',
+    dislikedItems: ['ขยะ'],
+    birthday: '17 ฤดูหนาว',
     location: 'ร้านอาหารเดลิซ'
   },
   {
@@ -80,8 +84,10 @@ export const CHARACTERS = [
     color: '#FFADAD',
     bio: 'เทพธิดาแห่งของหวานประจำร้านเดลิซ เธอเชื่อว่าความเหนื่อยล้าจากการทำงานหนักสามารถรักษาได้ด้วยเค้กสตอเบอร์รี่หนึ่งชิ้น',
     portrait: '👩‍🍳',
-    favoriteItems: ['ชอร์ตเค้ก', 'พุดดิ้ง', 'สตรอว์เบอร์รี'],
-    birthday: '12 ฤดูใบไม้ผลิ', // 12 พฤษภาคม
+    favoriteItems: ['พุดดิ้ง', 'สตรอว์เบอร์รี'],
+    specialFavorite: 'ชอร์ตเค้ก',
+    dislikedItems: ['ขยะ'],
+    birthday: '12 ฤดูใบไม้ผลิ',
     location: 'ร้านอาหารเดลิซ'
   },
   {
@@ -92,7 +98,9 @@ export const CHARACTERS = [
     bio: 'ช่างไม้จอมพลังผู้มีร่างกายแข็งแกร่งเหมือนเนื้อไม้ แต่กลับมีความสุนทรีย์ในการลิ้มรสซาชิมิสดๆ ยามพักเที่ยง',
     portrait: '🔨',
     favoriteItems: ['ซาชิมิ', 'ไม้', 'แร่เหล็ก'],
-    birthday: '5 ฤดูใบไม้ร่วง', // 5 พฤศจิกายน
+    specialFavorite: 'ซาชิมิ',
+    dislikedItems: ['ขยะ'],
+    birthday: '5 ฤดูใบไม้ร่วง',
     location: 'ร้านช่างไม้'
   },
   {
@@ -103,7 +111,9 @@ export const CHARACTERS = [
     bio: 'ช่างตีเหล็กผู้ร้อนแรงเหมือนเตาหลอม กลิ่นขิงสดคือสิ่งที่ช่วยให้จิตใจที่เคร่งขรึมของเขาสงบลงท่ามกลางเสียงค้อน',
     portrait: '⚒️',
     favoriteItems: ['ขิง', 'แร่ทองแดง', 'แร่เหล็ก'],
-    birthday: '10 ฤดูหนาว', // 10 กุมภาพันธ์
+    specialFavorite: 'ขิง',
+    dislikedItems: ['ขยะ'],
+    birthday: '10 ฤดูหนาว',
     location: 'ร้านตีเหล็ก'
   },
   {
@@ -114,6 +124,8 @@ export const CHARACTERS = [
     bio: 'ภรรยาผู้ร่าเริงของสมิธ เธอคอยดูแลความเรียบร้อยในร้านตีเหล็กและหลงรักการเก็บวอลนัทในป่าเป็นที่สุด',
     portrait: '👩‍🍳', // Fandom: Helen
     favoriteItems: ['ว่านหางจระเข้', 'วอลนัท', 'แอปเปิ้ล'],
+    specialFavorite: 'วอลนัท',
+    dislikedItems: ['ขยะ'],
     birthday: '4 ฤดูใบไม้ร่วง',
     location: 'ร้านตีเหล็ก'
   },
@@ -125,7 +137,9 @@ export const CHARACTERS = [
     bio: 'เจ้าของร้านขายของชำนัคเคิลผู้ใจดี เขาชอบสะสมวัตถุดิบคุณภาพเยี่ยมและชอบทานกราแตงร้อนๆ เป็นที่สุด',
     portrait: '🧔🏻',
     favoriteItems: ['กราแตง', 'เห็ดมัตสึทาเกะ'],
-    birthday: '1 ฤดูร้อน', // 1 กรกฎาคม
+    specialFavorite: 'กราแตง',
+    dislikedItems: ['ขยะ'],
+    birthday: '1 ฤดูร้อน',
     location: 'ร้านขายของชำนัคเคิล'
   },
   {
@@ -136,7 +150,9 @@ export const CHARACTERS = [
     bio: 'คุณหมอหนุ่มผู้มุ่งมั่น รักความสมบูรณ์แบบเหมือนกราแตงกะหล่ำดอกที่อบจนชีสเหลืองทองพอดี',
     portrait: '👨‍⚕️',
     favoriteItems: ['กราแตง', 'กะหล่ำดอก', 'ชีส'],
-    birthday: '11 ฤดูหนาว', // 11 ธันวาคม
+    specialFavorite: 'กราแตง',
+    dislikedItems: ['ขยะ'],
+    birthday: '11 ฤดูหนาว',
     location: 'สถานพยาบาลร็อคโกะ'
   },
   {
@@ -146,8 +162,10 @@ export const CHARACTERS = [
     color: '#FFDEB4',
     bio: 'ภรรยาของนัคเคิลที่ช่วยดูแลร้านขายของชำ เธอมีรสนิยมลุ่มลึกและชอบทานมองบลังค์เป็นที่สุด',
     portrait: '🛍️',
-    favoriteItems: ['มองบลังค์', 'พุดดิ้ง', 'เกาลัด'],
-    birthday: '2 ฤดูใบไม้ผลิ', // 2 พฤษภาคม
+    favoriteItems: ['พุดดิ้ง', 'เกาลัด'],
+    specialFavorite: 'มองบลังค์',
+    dislikedItems: ['ขยะ'],
+    birthday: '2 ฤดูใบไม้ผลิ',
     location: 'ร้านขายของชำนัคเคิล'
   },
   {
@@ -158,6 +176,8 @@ export const CHARACTERS = [
     bio: 'จิตวิญญาณแห่งพฤกษาผู้สง่างามและบริสุทธิ์เหมือนโยเกิร์ตสดใหม่ในยามเช้า พืชผลที่สดใสคือสิ่งที่ทำให้เธอแย้มยิ้ม',
     portrait: '🧚',
     favoriteItems: ['กะหล่ำปลี', 'โยเกิร์ต'],
+    specialFavorite: 'โยเกิร์ต',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ต้นไม้ใหญ่'
   },
@@ -169,7 +189,9 @@ export const CHARACTERS = [
     bio: 'ยามเฝ้าเมืองผู้แข็งแกร่งที่มีร่างกายบึกบึนเหมือนสเต็กปลามาร์ลินชิ้นหนา เขามีวินัยที่เคร่งครัดพอๆ กับรสสัมผัสของอาหารปิ้งย่าง',
     portrait: '💂🏻',
     favoriteItems: ['มาร์ลินสเต็ก', 'เหยื่อตกปลา'],
-    birthday: '12 ฤดูใบไม้ร่วง', // 12 ตุลาคม
+    specialFavorite: 'มาร์ลินสเต็ก',
+    dislikedItems: ['ขยะ'],
+    birthday: '12 ฤดูใบไม้ร่วง',
     location: 'ทางเข้าเมือง / ด่านตรวจ'
   },
   {
@@ -180,7 +202,9 @@ export const CHARACTERS = [
     bio: 'ผู้ช่วยนายกที่ทำงานหนักจนหัวหมุน เขาต้องการความหวานละมุนของพุดดิ้งเพื่อเยียวยาจิตใจที่เหนื่อยล้าจากการเคลียร์เอกสาร',
     portrait: '🤵🏻',
     favoriteItems: ['พุดดิ้ง', 'ดอกแดนดิไลออน'],
-    birthday: '17 ฤดูใบไม้ผลิ', // 17 เมษายน
+    specialFavorite: 'พุดดิ้ง',
+    dislikedItems: ['ขยะ'],
+    birthday: '17 ฤดูใบไม้ผลิ',
     location: 'ที่ว่าการเมือง'
   },
   {
@@ -191,7 +215,9 @@ export const CHARACTERS = [
     bio: 'คุณยายผู้เปี่ยมด้วยปัญญาและความเมตตา อบอุ่นและนุ่มนวลเหมือนซุปฟักทองในฤดูหนาวที่คอยปลอบประโลมหัวใจทุกคน',
     portrait: '👵🏻',
     favoriteItems: ['ฟักทอง', 'อัญมณี'],
-    birthday: '4 ฤดูหนาว', // 4 ธันวาคม
+    specialFavorite: 'ฟักทอง',
+    dislikedItems: ['ขยะ'],
+    birthday: '4 ฤดูหนาว',
     location: 'ที่ว่าการเมือง / บ้านนายกเทศมนตรี'
   },
   {
@@ -202,7 +228,9 @@ export const CHARACTERS = [
     bio: 'ช่างตีเหล็กอาวุโสผู้หลงใหลในความกรอบเกรียมของเทมปุระ ความร้อนจากเตาหลอมทำให้เขารู้จักรสชาติของความอดทน',
     portrait: '👨‍🏭',
     favoriteItems: ['เทมปุระ', 'แร่ทอง'],
-    birthday: '10 ฤดูหนาว', // 10 ธันวาคม
+    specialFavorite: 'เทมปุระ',
+    dislikedItems: ['ขยะ'],
+    birthday: '10 ฤดูหนาว',
     location: 'ร้านตีเหล็ก'
   },
   {
@@ -212,8 +240,10 @@ export const CHARACTERS = [
     color: '#F9B5D0',
     bio: 'นางพยาบาลผู้อ่อนโยน เธอเชื่อว่ากราแตงร้อนๆ และถั่ววอลนัทคือซุปเปอร์ฟู้ดที่จะช่วยให้ทุกคนในเมืองอายุยืนยาว',
     portrait: '👩‍🔬',
-    favoriteItems: ['วอลนัท', 'กราแตง'],
-    birthday: '23 ฤดูใบไม้ร่วง', // 23 ตุลาคม
+    favoriteItems: ['วอลนัท'],
+    specialFavorite: 'กราแตง',
+    dislikedItems: ['ขยะ'],
+    birthday: '23 ฤดูใบไม้ร่วง',
     location: 'สถานพยาบาลร็อคโกะ'
   },
   {
@@ -224,7 +254,9 @@ export const CHARACTERS = [
     bio: 'เด็กน้อยจอมซนที่ฝันอยากเป็นยอดเชฟเหมือนพ่อ เขาสามารถกินเฟรนช์ฟรายส์ได้ทั้งวันโดยไม่เบื่อเลยล่ะ',
     portrait: '👦🏻',
     favoriteItems: ['เฟรนช์ฟรายส์', 'ข้าวโพด'],
-    birthday: '18 ฤดูหนาว', // 18 ธันวาคม
+    specialFavorite: 'เฟรนช์ฟรายส์',
+    dislikedItems: ['ผัก', 'ขยะ'],
+    birthday: '18 ฤดูหนาว',
     location: 'ร้านอาหารเดลิซ'
   },
   {
@@ -235,6 +267,8 @@ export const CHARACTERS = [
     bio: 'ลูกสาวคนกลางผู้ร่าเริงสดใสเหมือนสตอเบอร์รี่สดใหม่ ความฝันของเธอคือการได้ทานกราแตงฝีมือคุณหมอปาสก์',
     portrait: '👧🏻', // Fandom: Sera
     favoriteItems: ['สตรอว์เบอร์รี', 'กราแตง'],
+    specialFavorite: 'กราแตง',
+    dislikedItems: ['ขยะ'],
     birthday: '23 ฤดูใบไม้ผลิ',
     location: 'ร้านขายของชำนัคเคิล'
   },
@@ -245,8 +279,10 @@ export const CHARACTERS = [
     color: '#FFF9B0',
     bio: 'ลูกสาวคนเล็กจอมขี้อายที่มีจิตใจอ่อนละมุนเหมือนชีสเค้กอบใหม่ เธอชอบความหอมหวานของแอปริคอทในวันแดดจ้า',
     portrait: '👶🏻',
-    favoriteItems: ['ชีสเค้ก', 'แอปริคอท'],
-    birthday: '14 ฤดูร้อน', // 14 กรกฎาคม
+    favoriteItems: ['แอปริคอท'],
+    specialFavorite: 'ชีสเค้ก',
+    dislikedItems: ['ขยะ'],
+    birthday: '14 ฤดูร้อน',
     location: 'ร้านขายของชำนัคเคิล'
   },
   {
@@ -257,6 +293,8 @@ export const CHARACTERS = [
     bio: 'ลูกสาวคนโตผู้เคร่งครัดและรับผิดชอบสูง เธอหลงรักในรสสัมผัสที่ซับซ้อนของเกาลัดคั่วและของหวานระดับสูงอย่างมองบลังค์',
     portrait: '👧🏻', // Fandom: Nene
     favoriteItems: ['มองบลังค์', 'เกาลัด'],
+    specialFavorite: 'มองบลังค์',
+    dislikedItems: ['ขยะ'],
     birthday: '26 ฤดูใบไม้ร่วง',
     location: 'ร้านขายของชำนัคเคิล'
   },
@@ -267,8 +305,10 @@ export const CHARACTERS = [
     color: '#91D8E4',
     bio: 'ราชินีแห่งท้องทะเลผู้รักสันโดษ เธอมีความแข็งแกร่งเหมือนเปลือกกุ้งมังกรแต่ซ่อนหัวใจที่อ่อนโยนไว้ภายใน',
     portrait: '🎣',
-    favoriteItems: ['กุ้งมังกร', 'กุ้ง'],
-    birthday: '13 ฤดูหนาว', // 13 ธันวาคม
+    favoriteItems: ['กุ้ง'],
+    specialFavorite: 'กุ้งมังกร',
+    dislikedItems: ['ขยะ'],
+    birthday: '13 ฤดูหนาว',
     location: 'ร้านอุปกรณ์ตกปลา'
   },
   {
@@ -279,7 +319,9 @@ export const CHARACTERS = [
     bio: 'พนักงานร้านเดลิซผู้ขยันขันแข็ง เขาชอบความเรียบง่ายของแซนด์วิชที่ทำให้เขามีแรงสู้กับกองจานชามในครัวต่อไป',
     portrait: '🥪',
     favoriteItems: ['แซนด์วิช', 'โอเด้ง'],
-    birthday: '10 ฤดูร้อน', // 10 กรกฎาคม
+    specialFavorite: 'แซนด์วิช',
+    dislikedItems: ['ขยะ'],
+    birthday: '10 ฤดูร้อน',
     location: 'ร้านอาหารเดลิซ'
   },
   {
@@ -290,6 +332,8 @@ export const CHARACTERS = [
     bio: 'บริกรผู้เงียบขรึมราวกับความสงบของท้องทะเล เขามีสมาธิที่แน่วแน่ในการจัดวางซาชิมิสดๆ ให้สวยงามที่สุด',
     portrait: '🍣', // Fandom: Blane
     favoriteItems: ['ซาชิมิ', 'ปลาไท'],
+    specialFavorite: 'ซาชิมิ',
+    dislikedItems: ['ขยะ'],
     birthday: '1 ฤดูใบไม้ร่วง',
     location: 'ร้านอาหารเดลิซ'
   },
@@ -301,6 +345,8 @@ export const CHARACTERS = [
     bio: 'เจ้าของร้านวัวผู้ใจดี เธอรักสัตว์ทุกตัวเหมือนลูกและชอบทานคุกกี้ที่อบเสร็จใหม่ๆ เป็นที่สุด',
     portrait: '🐄', // Fandom: Yarra
     favoriteItems: ['คุกกี้', 'นม', 'พุดดิ้ง'],
+    specialFavorite: 'คุกกี้',
+    dislikedItems: ['ขยะ'],
     birthday: '4 ฤดูใบไม้ผลิ',
     location: 'ร้านวัวกู๊ดมอนิ่ง'
   },
@@ -312,6 +358,8 @@ export const CHARACTERS = [
     bio: 'ลูกชายของยาร่าที่คอยช่วยดูแลฟาร์มสัตว์ เขาชอบของหวานและไข่ไก่สดๆ จากเล้า',
     portrait: '🐣', // Fandom: Chick
     favoriteItems: ['ไข่ต้ม', 'พุดดิ้ง', 'ชีสเค้ก'],
+    specialFavorite: 'พุดดิ้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '22 ฤดูใบไม้ผลิ',
     location: 'ร้านวัวกู๊ดมอนิ่ง'
   },
@@ -323,6 +371,8 @@ export const CHARACTERS = [
     bio: 'พนักงานหนุ่มร้านวัวผู้เงียบขรึมแต่ทำงานคล่องแคล่ว แซนด์วิชคืออาหารที่เขาชอบทานที่สุดยามพักเที่ยง',
     portrait: '🤠', // Fandom: Ketch
     favoriteItems: ['แซนด์วิช', 'ผักกาด', 'ชีส'],
+    specialFavorite: 'แซนด์วิช',
+    dislikedItems: ['ขยะ'],
     birthday: '18 ฤดูร้อน',
     location: 'ร้านวัวกู๊ดมอนิ่ง'
   },
@@ -334,6 +384,8 @@ export const CHARACTERS = [
     bio: 'คุณยายเจ้าของร้านสัตว์ที่มีความรู้เรื่องสัตว์ป่าเป็นอย่างดี เธอชอบปลูกมะเขือเทศไว้ทานเองที่หลังบ้าน',
     portrait: '👵🏻', // Fandom: Ravi
     favoriteItems: ['มะเขือเทศ', 'ปุ๋ย', 'ซุปมิโซะ'],
+    specialFavorite: 'มะเขือเทศ',
+    dislikedItems: ['ขยะ'],
     birthday: '12 ฤดูใบไม้ร่วง',
     location: 'ร้านสัตว์กู๊ดสลีป'
   },
@@ -345,6 +397,8 @@ export const CHARACTERS = [
     bio: 'หลานชายของแรบบี้ที่เป็นเพื่อนเล่นกับโนบิตะเสมอ เขาชอบแฮมเบอร์เกอร์ฝีมือคุณยายเป็นอันดับหนึ่ง',
     portrait: '👦🏻', // Fandom: Rem
     favoriteItems: ['แฮมเบอร์เกอร์', 'พุดดิ้ง', 'เบ็ดตกปลา'],
+    specialFavorite: 'แฮมเบอร์เกอร์',
+    dislikedItems: ['ขยะ'],
     birthday: '26 ฤดูใบไม้ร่วง',
     location: 'ร้านสัตว์กู๊ดสลีป'
   },
@@ -356,6 +410,8 @@ export const CHARACTERS = [
     bio: 'เด็กสาวผู้อ่อนโยนจากร้านสัตว์ เธอชอบพายแอปเปิ้ลและดอกไม้ป่าสีสันสดใส',
     portrait: '👧🏻', // Fandom: Erim
     favoriteItems: ['พายแอปเปิ้ล', 'ดอกไม้', 'วอลนัท'],
+    specialFavorite: 'พายแอปเปิ้ล',
+    dislikedItems: ['ขยะ'],
     birthday: '15 ฤดูหนาว',
     location: 'ร้านสัตว์กู๊ดสลีป'
   },
@@ -366,7 +422,9 @@ export const CHARACTERS = [
     color: '#4D96FF',
     bio: 'ลูกชายของเชลล่าผู้หลงรักท้องทะเล เขาฝันอยากจะเป็นนักตกปลาผู้ยิ่งใหญ่เหมือนแม่',
     portrait: '🧒🏻', // Fandom: Triton
-    favoriteItems: ['พิซซ่า', 'ปลาซูซูกิ', 'คุกกี้'],
+    favoriteItems: ['ปลาซูซูกิ', 'คุกกี้'],
+    specialFavorite: 'พิซซ่า',
+    dislikedItems: ['ขยะ'],
     birthday: '17 ฤดูร้อน',
     location: 'ร้านอุปกรณ์ตกปลา'
   }
@@ -379,6 +437,8 @@ export const CHARACTERS = [
     bio: 'คอโรป็อกคุรุสีฟ้าผู้เงียบขรึม เขาชอบช่วยงานฟาร์มและโปรดปรานแป้งสาลีเป็นที่สุด',
     portrait: '🧚‍♂️', // Fandom: Rose
     favoriteItems: ['แป้ง', 'แร่ขยะ'],
+    specialFavorite: 'แป้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ถ้ำต้นไม้ใหญ่'
   },
@@ -390,6 +450,8 @@ export const CHARACTERS = [
     bio: 'คอโรป็อกคุรุสีเขียวผู้ร่าเริง เขามักจะตื่นเต้นเมื่อเห็นแร่ที่ขุดได้จากเหมือง',
     portrait: '🧚‍♂️', // Fandom: Gid
     favoriteItems: ['แป้ง', 'แร่ขยะ'],
+    specialFavorite: 'แป้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ถ้ำต้นไม้ใหญ่'
   },
@@ -401,6 +463,8 @@ export const CHARACTERS = [
     bio: 'คอโรป็อกคุรุสีชมพูผู้อ่อนโยน เธอรักการทำอาหารและชอบขอแป้งจากโนบิตะอยู่เสมอ',
     portrait: '🧚‍♀️', // Fandom: Luu
     favoriteItems: ['แป้ง', 'แร่ขยะ'],
+    specialFavorite: 'แป้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ถ้ำต้นไม้ใหญ่'
   },
@@ -412,6 +476,8 @@ export const CHARACTERS = [
     bio: 'คอโรป็อกคุรุสีเหลืองผู้ขยันขันแข็ง เขาเชื่อว่าการทำงานหนักคือความสุขของชีวิต',
     portrait: '🧚‍♂️', // Fandom: Bam
     favoriteItems: ['แป้ง', 'แร่ขยะ'],
+    specialFavorite: 'แป้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ถ้ำต้นไม้ใหญ่'
   },
@@ -423,6 +489,8 @@ export const CHARACTERS = [
     bio: 'คอโรป็อกคุรุสีส้มผู้ขี้เล่น เขาชอบเล่นซ่อนแอบในถ้ำต้นไม้ใหญ่กับเพื่อนๆ',
     portrait: '🧚‍♂️', // Fandom: Kee
     favoriteItems: ['แป้ง', 'แร่ขยะ'],
+    specialFavorite: 'แป้ง',
+    dislikedItems: ['ขยะ'],
     birthday: '??', // Fandom: Unknown
     location: 'ถ้ำต้นไม้ใหญ่'
   }
