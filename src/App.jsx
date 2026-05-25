@@ -35,7 +35,6 @@ const NavBar = memo(({ activeTab, onTabChange, onToggleShowcase }) => (
             onClick={() => onTabChange(cat.id)}
             aria-label={`Go to ${cat.title} page`}
             className={cn("relative py-1 transition-all duration-300 hover:text-[#F4A460]",
-              "relative py-1 transition-all duration-300 hover:text-[#F4A460]",
               activeTab === cat.id ? "text-[#5D4037]" : ""
             )}
           >

@@ -110,7 +110,7 @@ export const CHARACTERS = [
     color: '#829460',
     bio: 'ช่างตีเหล็กผู้ร้อนแรงเหมือนเตาหลอม กลิ่นขิงสดคือสิ่งที่ช่วยให้จิตใจที่เคร่งขรึมของเขาสงบลงท่ามกลางเสียงค้อน',
     portrait: '⚒️',
-    favoriteItems: ['ขิง', 'แร่ทองแดง', 'แร่เหล็ก'],
+    favoriteItems: ['แร่ทองแดง', 'แร่เหล็ก'],
     specialFavorite: 'ขิง',
     dislikedItems: ['ขยะ'],
     birthday: '10 ฤดูหนาว',
@@ -364,7 +364,7 @@ export const CHARACTERS = [
     location: 'ร้านวัวกู๊ดมอนิ่ง'
   },
   {
-    id: 'ketchch',
+    id: 'ketch',
     name: 'เคตช์',
     category: "ซีเซ็นตะวันตก", // Fandom: Good Morning Ranch
     color: '#829460',
