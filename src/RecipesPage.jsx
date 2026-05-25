@@ -703,7 +703,7 @@ const RecipesPage = ({ onBack, initialSearch = '' }) => {
           <p className="col-span-full py-20 text-center opacity-40 italic">กำลังเตรียมครัวอย่างพิถีพิถัน... 🥣</p>
         ) : filteredRecipes.length > 0 ? (
           <motion.div
-            key={isFiltered ? "filtered" : "empty"} // บังคับให้เริ่มอนิเมชันใหม่เมื่อมีการค้นหา
+            key={isFiltered ? "filtered" : "empty"}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
