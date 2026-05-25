@@ -726,8 +726,8 @@ const RecipesPage = ({ onBack, initialSearch = '' }) => {
         </div>
       </div>
 
-      {/* Aggregate Summary Panel - 
-        {summaryData && (
+      {/* Aggregate Summary Panel */}
+      {summaryData && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
