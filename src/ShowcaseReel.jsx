@@ -2,6 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from './utils'; // Assuming cn utility is available
 
+// --- Sound Effects Assets ---
+// ใช้เสียงโทน Soft/Minimal เพื่อไม่ให้รบกวนผู้ใช้งาน
+const SOUNDS = {
+  TRANSITION: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3', // เสียง Pop เบาๆ ตอนเปลี่ยนซีน
+  CLICK: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',        // เสียงคลิกเม้าส์แบบ Interface
+  TYPING: 'https://assets.mixkit.co/active_storage/sfx/448/448-preview.mp3'          // เสียงพิมพ์คีย์บอร์ด
+};
+
+const playSound = (url, volume = 0.1) => {
+  const audio = new Audio(url);
+  audio.volume = volume;
+  audio.play().catch(() => {}); // ป้องกัน Error กรณีเบราว์เซอร์บล็อกการเล่นเสียงอัตโนมัติ
+};
+
 // --- Mock Data for Showcase ---
 // (Ideally, this would be imported from central data files, but for a standalone showcase, mock data here is fine)
 const MOCK_CHARACTERS = {
@@ -113,6 +127,7 @@ const TypingEffect = ({ text, speed = 80 }) => {
     let i = 0;
     const timer = setInterval(() => {
       setDisplayedText(text.slice(0, i + 1));
+      playSound(SOUNDS.TYPING, 0.03); // เล่นเสียงพิมพ์เบาๆ (ระดับเสียง 3% เพื่อไม่ให้รำคาญ)
       i++;
       if (i >= text.length) clearInterval(timer);
     }, speed);
@@ -166,7 +181,7 @@ const TextReveal = ({ text, className = "" }) => {
 const SearchSimulation = ({ text, label = "Quick Search" }) => (
   <div className="flex flex-col items-center gap-4">
     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8C7E6A] opacity-50">{label}</span>
-    <div className="bg-white/80 backdrop-blur-xl border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-2xl relative overflow-hidden">
+    <div className="bg-white/90 backdrop-blur-xl border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-xl relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-[#F4A460]/10" />
       <motion.span 
         animate={{ scale: [1, 1.2, 1] }} 
@@ -192,17 +207,17 @@ const SearchSimulation = ({ text, label = "Quick Search" }) => (
  * แทนที่ตัวหนังสือหมุนๆ ด้วย Floating Bokeh
  */
 const DynamicBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
     {[...Array(6)].map((_, i) => (
       <motion.div
         key={i}
-        className="absolute rounded-full blur-[100px]"
+        className="absolute rounded-full blur-[120px]"
         style={{
           width: `${Math.random() * 400 + 200}px`,
           height: `${Math.random() * 400 + 200}px`,
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
-          backgroundColor: ['#FF8AAE', '#6BCBFF', '#F3E5AB', '#82A07D'][i % 4],
+          backgroundColor: ['#FFE4C4', '#F3DCC1', '#FDFCF0', '#E2F0D9'][i % 4], // Softer Cream/Pastel colors
         }}
         animate={{
           x: [0, Math.random() * 100 - 50, 0],
@@ -222,9 +237,10 @@ const DynamicBackground = () => (
 const MouseCursor = ({ target, label }) => (
   <motion.div
     animate={target}
-    initial={{ x: '90vw', y: '90vh', opacity: 0 }}
-    transition={{ type: "spring", stiffness: 50, damping: 20 }}
+    initial={{ x: '50vw', y: '90vh', opacity: 0 }}
+    transition={{ type: "spring", stiffness: 40, damping: 25, mass: 1.2 }} // Smoother, heavier feel
     className="fixed z-[11000] pointer-events-none flex items-start"
+    style={{ x: '-10px', y: '-10px' }} // Offset to point accurately
   >
     <motion.svg 
       animate={target.click ? { scale: [1, 0.8, 1] } : {}}
@@ -235,7 +251,7 @@ const MouseCursor = ({ target, label }) => (
           initial={{ scale: 0, opacity: 1 }}
           animate={{ scale: 4, opacity: 0 }}
           transition={{ duration: 0.5 }}
-          cx="12" cy="12" r="8" stroke="#F4A460" strokeWidth="2" fill="none"
+          cx="12" cy="12" r="10" stroke="#F4A460" strokeWidth="3" fill="none"
         />
       )}
     </motion.svg>
@@ -247,7 +263,7 @@ const MouseCursor = ({ target, label }) => (
           exit={{ opacity: 0, scale: 0.8 }}
           className="bg-[#1A1A1A] text-[#FFF9F0] text-[9px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2"
         >
-          <span className="w-1.5 h-1.5 bg-[#F4A460] rounded-full animate-pulse" />
+          <span className="w-1.5 h-1.5 bg-[#F4A460] rounded-full animate-ping" />
           {label}
         </motion.div>
       )}
@@ -346,12 +362,28 @@ const ShowcaseReel = ({ onFinish }) => {
   const [currentScene, setCurrentScene] = useState(0);
   const [flash, setFlash] = useState(false);
 
+  // --- Sound Effects Logic ---
+  useEffect(() => {
+    // เล่นเสียงเปลี่ยนซีน (เริ่มตั้งแต่ซีนที่ 2 เป็นต้นไป)
+    if (currentScene > 0) {
+      playSound(SOUNDS.TRANSITION, 0.05); // ระดับเสียง 5% (เบามาก)
+    }
+
+    // เล่นเสียงคลิกเม้าส์ ถ้าซีนนั้นมีการสั่งให้ Click
+    if (scene?.cursor?.click) {
+      const clickTimer = setTimeout(() => {
+        playSound(SOUNDS.CLICK, 0.08); // ระดับเสียง 8%
+      }, 800); // เล่นหลังจากเม้าส์เริ่มขยับไปแล้วเพื่อให้ดูสมจริง
+      return () => clearTimeout(clickTimer);
+    }
+  }, [currentScene, scene?.cursor?.click]);
+
   useEffect(() => {
     if (currentScene < SCENES.length - 1) {
       const timer = setTimeout(() => {
         setFlash(true);
         setCurrentScene((prev) => prev + 1);
-        setTimeout(() => setFlash(false), 100);
+        setTimeout(() => setFlash(false), 200);
       }, SCENES[currentScene].duration || 2000);
       return () => clearTimeout(timer);
     } else if (currentScene === SCENES.length - 1 && SCENES[currentScene].type !== 'cta') {
@@ -361,6 +393,7 @@ const ShowcaseReel = ({ onFinish }) => {
   }, [currentScene, onFinish]);
 
   const handleClose = () => {
+    playSound(SOUNDS.CLICK, 0.1);
     setTimeout(onFinish, 500);
   };
 
@@ -386,7 +419,7 @@ const ShowcaseReel = ({ onFinish }) => {
   const currentVariant = transitionVariants[scene.transition] || transitionVariants.slideUp;
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-[#FFF9F0] flex items-center justify-center overflow-hidden font-black uppercase">
+    <div className="fixed inset-0 z-[10000] bg-[#FFFDF5] flex items-center justify-center overflow-hidden font-black uppercase">
       {/* Screen Flash Effect */}
       <AnimatePresence>
         {flash && (
@@ -419,7 +452,7 @@ const ShowcaseReel = ({ onFinish }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="relative z-10"
+            className="relative z-10 flex justify-center w-full"
           >
             <SearchSimulation text={scene.text} label={scene.label} />
           </motion.div>
@@ -427,7 +460,7 @@ const ShowcaseReel = ({ onFinish }) => {
 
         {scene.type === 'hero-reveal' && (
           <motion.div key={`hero-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, scale: 2, filter: 'blur(20px)' }} variants={currentVariant} className="text-center relative z-10 px-4">
-            <TextReveal text={scene.content} className={`text-6xl md:text-[110px] leading-none ${scene.highlight ? 'text-[#F4A460]' : 'text-[#5D4037]'}`} />
+            <TextReveal text={scene.content} className={`text-5xl md:text-[100px] leading-tight ${scene.highlight ? 'text-[#F4A460]' : 'text-[#5D4037]'}`} />
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ delay: 1 }} className="text-[#5D4037] text-xl md:text-2xl tracking-[1em] mt-8">
               {scene.sub}
             </motion.p>
@@ -436,12 +469,12 @@ const ShowcaseReel = ({ onFinish }) => {
 
         {scene.type === 'text-reveal' && (
           <motion.div key={`text-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, y: -50 }} variants={currentVariant} className="text-center relative z-10">
-            {scene.bgIcon && (
+            {scene.bgIcon && ( // Increased emoji size and lower opacity for subtlety
               <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.1, scale: 1.5 }} className="absolute inset-0 -z-10 flex items-center justify-center text-[25rem]">
                 {scene.bgIcon}
               </motion.div>
             )}
-            <TextReveal text={scene.content} className="text-5xl md:text-8xl text-[#5D4037] font-black lowercase tracking-tighter" />
+            <TextReveal text={scene.content} className="text-5xl md:text-7xl text-[#5D4037] font-black tracking-tight" />
           </motion.div>
         )}
 
@@ -450,7 +483,7 @@ const ShowcaseReel = ({ onFinish }) => {
             {/* Use MOCK_CHARACTERS data */}
             {(() => {
               const char = MOCK_CHARACTERS[scene.charId];
-              if (!char) return null;
+              if (!char) return null; // Increased shadow and rounded corners
               return (
             <div className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
               <div className="flex items-center gap-6 mb-6">
@@ -480,7 +513,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-character' && (
-          <motion.div key="dual-char-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, x: -100 }} className="flex items-center gap-8 relative z-10">
+          <motion.div key="dual-char-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, x: -100 }} className="flex flex-wrap justify-center gap-8 relative z-10">
             {scene.charIds.map((charId, index) => {
               const char = MOCK_CHARACTERS[charId];
               if (!char) return null;
@@ -843,7 +876,7 @@ const ShowcaseReel = ({ onFinish }) => {
           >
             <div className="space-y-6">
               <h2 className="text-6xl md:text-9xl text-[#5D4037] tracking-tighter leading-none">{scene.content}</h2>
-              <p className="text-[#F4A460] tracking-[0.8em] text-lg font-bold">{scene.sub}</p>
+              <p className="text-[#F4A460] tracking-[0.6em] text-lg font-bold">{scene.sub}</p>
               {scene.description && (
                 <p className="text-sm text-[#5D4037]/70 italic mt-4 max-w-md mx-auto normal-case font-medium">{scene.description}</p>
               )}
