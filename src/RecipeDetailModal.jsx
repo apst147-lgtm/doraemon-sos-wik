@@ -23,7 +23,7 @@ const RecipeDetailModal = ({ selectedRecipe, onClose }) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 m-auto z-[70] w-[90%] max-w-md h-fit bg-[#FCFBF7] border-2 border-[#8C7E6A]/20 p-8 shadow-xl overflow-hidden rounded-3xl" // Simplified border, shadow, rounded corners
+            className="fixed inset-0 m-auto z-[70] w-[90%] max-w-md h-fit bg-[#FCFBF7] border-4 border-white p-8 shadow-[0_30px_100px_-10px_rgba(0,0,0,0.2)] overflow-hidden rounded-[50px]"
           >
             <div className="relative flex flex-col items-center">
               {/* Decorative Japanese Badge */}
@@ -35,13 +35,13 @@ const RecipeDetailModal = ({ selectedRecipe, onClose }) => {
               </div>
 
               {/* Icon Area - Styled like a Stamp */}
-              <div className="mb-8 flex h-24 w-24 items-center justify-center border border-[#8C7E6A]/20 bg-white p-4 shadow-inner"> {/* Smaller, no ring */}
-                <span className="text-7xl drop-shadow-sm">{selectedRecipe.icon}</span>
-              </div>
+              <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="mb-8 flex h-28 w-28 items-center justify-center border-4 border-white bg-white rounded-full shadow-xl">
+                <span className="text-6xl drop-shadow-sm">{selectedRecipe.icon}</span>
+              </motion.div>
 
               {/* Recipe Header */}
               <div className="text-center mb-10 w-full">
-                <h3 className="text-4xl font-black text-[#1A1A1A] tracking-tighter uppercase mb-2">
+                <h3 className="text-4xl font-black text-[#5D4037] tracking-tighter uppercase mb-2">
                   {selectedRecipe.name}
                 </h3>
                 <div className="mx-auto h-[1px] w-12 bg-[#1A1A1A]/20 mb-4"></div>

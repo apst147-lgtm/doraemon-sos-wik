@@ -214,56 +214,6 @@ const DynamicBackground = () => (
   </div>
 );
 
-/**
- * MouseCursor Component
- * เปลี่ยนเป็น Cursor มือสุดน่ารัก พร้อมเอฟเฟกต์คลิกแบบใหม่
- */
-const MouseCursor = ({ target, label }) => (
-  <motion.div
-    animate={target}
-    initial={{ x: '50vw', y: '100vh', opacity: 0 }}
-    transition={{ type: "spring", stiffness: 35, damping: 20, mass: 1.5 }}
-    className="fixed z-[11000] pointer-events-none flex items-start"
-  >
-    <div className="relative">
-      {/* Cute Glove Pointer */}
-      <motion.div
-        animate={target.click ? { scale: 0.7, rotate: -10 } : { scale: 1, rotate: 0 }}
-        className="w-10 h-10 flex items-center justify-center"
-      >
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-lg">
-          <path d="M7 10.5V6.5C7 5.11929 8.11929 4 9.5 4C10.8807 4 12 5.11929 12 6.5V10.5M7 10.5C7 10.5 5 10.5 5 12.5V16.5C5 18.7091 6.79086 20.5 9 20.5H15C17.2091 20.5 19 18.7091 19 16.5V12.5C19 10.5 17 10.5 17 10.5M7 10.5H17M12 10.5V8.5C12 7.11929 13.1193 6 14.5 6C15.8807 6 17 7.11929 17 8.5V10.5" stroke="#5D4037" strokeWidth="2" strokeLinecap="round" fill="white"/>
-        </svg>
-      </motion.div>
-
-      {/* Click Sparkle Effect */}
-      {target.click && (
-        <motion.div
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 2, opacity: 0 }}
-          className="absolute -top-2 -left-2 flex items-center justify-center w-14 h-14"
-        >
-          <span className="text-2xl">✨</span>
-        </motion.div>
-      )}
-    </div>
-
-    <AnimatePresence>
-      {label && (
-        <motion.div
-          initial={{ opacity: 0, x: -10, scale: 0.8 }}
-          animate={{ opacity: 1, x: 20, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="bg-white/95 backdrop-blur-md text-[#5D4037] text-[10px] font-black px-4 py-2 rounded-2xl shadow-2xl border-2 border-[#F3DCC1] flex items-center gap-2 whitespace-nowrap"
-        >
-          <span className="w-2 h-2 bg-[#F4A460] rounded-full animate-pulse" />
-          {label}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </motion.div>
-);
-
 const SCENES = [
   // --- 3 ซีนแรกสไตล์ Cinematic Reveal ---
   { type: 'hero-reveal', content: 'THE ULTIMATE', sub: 'WIKI DATABASE', duration: 1200, transition: 'zoomIn' },
@@ -365,6 +315,7 @@ const ShowcaseReel = ({ onFinish }) => {
 
   const scene = SCENES[currentScene];
 
+  // Logic สำหรับการเปลี่ยนฉากอัตโนมัติ
   useEffect(() => {
     if (currentScene < SCENES.length - 1) {
       const timer = setTimeout(() => {
@@ -383,62 +334,37 @@ const ShowcaseReel = ({ onFinish }) => {
     setTimeout(onFinish, 500);
   };
 
-  const prefersReducedMotion = useReducedMotion();
-
-  // Multi-type Transitions
+  // การตั้งค่าอนิเมชันตอนเปลี่ยนฉาก
   const transitionVariants = {
-    slideUp: {
-      initial: { opacity: 0, y: 100 },
-      animate: { opacity: 1, y: 0 },
-    },
-    zoomIn: {
-      initial: { opacity: 0, scale: 0.8 },
-      animate: { opacity: 1, scale: 1 },
-    },
-    sideSlide: {
-      initial: { opacity: 0, x: 200 },
-      animate: { opacity: 1, x: 0 },
-    }
+    slideUp: { initial: { opacity: 0, y: 100 }, animate: { opacity: 1, y: 0 } },
+    zoomIn: { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 1, scale: 1 } },
+    sideSlide: { initial: { opacity: 0, x: 200 }, animate: { opacity: 1, x: 0 } }
   };
 
   const currentVariant = transitionVariants[scene.transition] || transitionVariants.slideUp;
 
   return (
     <div className="fixed inset-0 z-[10000] bg-[#FFFDF5] flex items-center justify-center overflow-hidden font-black uppercase">
-      {/* Screen Flash Effect */}
+      {/* เอฟเฟกต์แฟลชตอนเปลี่ยนฉาก */}
       <AnimatePresence>
         {flash && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 0 }}
-            className="absolute inset-0 bg-white z-[12000] pointer-events-none"
-          />
+          <motion.div initial={{ opacity: 1 }} animate={{ opacity: 0 }} className="absolute inset-0 bg-white z-[12000] pointer-events-none" />
         )}
       </AnimatePresence>
 
-      {/* Stylish Bokeh Background */}
       <DynamicBackground />
 
-      {/* Mouse Cursor with dynamic label */}
-      <MouseCursor target={scene.cursor || { opacity: 0 }} label={scene.cursorLabel} />
-
-      {/* Skip Button */}
       <button 
         onClick={handleClose}
-        className="absolute top-10 right-10 text-[10px] tracking-[0.4em] text-[#5D4037]/40 hover:text-[#5D4037] transition-all z-50 px-5 py-2 border border-[#5D4037]/10 rounded-full hover:bg-[#5D4037] hover:text-[#FFF9F0] active:scale-95" // Added active state
+        className="absolute top-10 right-10 text-[10px] tracking-[0.4em] text-[#5D4037]/40 hover:text-[#5D4037] transition-all z-50 px-5 py-2 border border-[#5D4037]/10 rounded-full hover:bg-[#5D4037] hover:text-[#FFF9F0]"
       >
         SKIP REEL
       </button>
 
       <AnimatePresence mode="popLayout">
+        {/* แสดงผลตามประเภทของฉาก */}
         {scene.type === 'simulate-search' && (
-          <motion.div
-            key={`search-${currentScene}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="relative z-10 flex justify-center w-full"
-          >
+          <motion.div key={`search-${currentScene}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} className="relative z-10 flex justify-center w-full">
             <SearchSimulation text={scene.text} label={scene.label} />
           </motion.div>
         )}
@@ -454,51 +380,12 @@ const ShowcaseReel = ({ onFinish }) => {
 
         {scene.type === 'text-reveal' && (
           <motion.div key={`text-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, y: -50 }} variants={currentVariant} className="text-center relative z-10">
-            {scene.bgIcon && ( // Increased emoji size and lower opacity for subtlety
+            {scene.bgIcon && (
               <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.1, scale: 1.5 }} className="absolute inset-0 -z-10 flex items-center justify-center text-[25rem]">
                 {scene.bgIcon}
               </motion.div>
             )}
             <TextReveal text={scene.content} className="text-5xl md:text-7xl text-[#5D4037] font-black tracking-tight" />
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-character' && (
-          <motion.div key={`char-card-${scene.charId}`} variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.5 }} className="flex flex-col items-center relative z-10">
-            {/* Use MOCK_CHARACTERS data */}
-            {(() => {
-              const char = MOCK_CHARACTERS[scene.charId];
-              if (!char) return null; // Increased shadow and rounded corners
-              return (
-            <div className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
-              <div className="flex items-center gap-6 mb-6">
-                <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl overflow-hidden" style={{ backgroundColor: `${char.color}20` }}>
-                  {char.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http')) 
-                    ? <img src={char.portrait} alt={char.name} className="w-full h-full object-cover" />
-                    : char.portrait
-                  }
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-2xl font-black text-[#5D4037] leading-none mb-2">{char.name}</h3>
-                  <span className="text-xs font-bold text-[#F4A460] uppercase tracking-widest">🎂 {char.birthday}</span>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <p className="text-sm text-[#5D4037]/70 italic leading-relaxed line-clamp-2">"{char.bio}"</p>
-                <div className="pt-4 border-t border-[#F3DCC1]/50">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 mb-2">Favorite Item</p>
-                  <p className="text-base font-bold text-[#5D4037]">⭐ {char.specialFavorite}</p>
-                  {char.favoriteItems && char.favoriteItems.length > 0 && (
-                    <p className="text-xs text-[#5D4037]/60 mt-2">ชอบ: {char.favoriteItems.join(', ')}</p>
-                  )}
-                  {char.dislikedItems && char.dislikedItems.length > 0 && char.dislikedItems[0] && ( // Check if dislikedItems[0] exists
-                    <p className="text-xs text-[#E94E4E]/60 mt-1">ไม่ชอบ: {char.dislikedItems[0]}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-              );
-            })()}
           </motion.div>
         )}
 
@@ -508,13 +395,7 @@ const ShowcaseReel = ({ onFinish }) => {
               const char = MOCK_CHARACTERS[charId];
               if (!char) return null;
               return (
-                <motion.div 
-                  key={charId}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                  className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80"
-                >
+                <motion.div key={charId} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.2 }} className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
                   <div className="flex items-center gap-6 mb-6">
                     <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl" style={{ backgroundColor: `${char.color}20` }}>{char.portrait}</div>
                     <div className="min-w-0">
@@ -527,293 +408,76 @@ const ShowcaseReel = ({ onFinish }) => {
                     <div className="pt-4 border-t border-[#F3DCC1]/50">
                       <p className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 mb-2">Favorite Item</p>
                       <p className="text-base font-bold text-[#5D4037]">⭐ {char.specialFavorite}</p>
-                      {char.favoriteItems && char.favoriteItems.length > 0 && (
-                        <p className="text-xs text-[#5D4037]/60 mt-2">ชอบ: {char.favoriteItems.join(', ')}</p>
-                      )}
-                      {char.dislikedItems && char.dislikedItems.length > 0 && char.dislikedItems[0] && ( // Check if dislikedItems[0] exists
-                        <p className="text-xs text-[#E94E4E]/60 mt-1">ไม่ชอบ: {char.dislikedItems[0]}</p>
-                      )}
                     </div>
                   </div>
                 </motion.div>
               );
             })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-shop' && (
-          <motion.div key={`shop-card-${scene.shopId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
-            {(() => {
-              const shop = MOCK_SHOPS[scene.shopId];
-              if (!shop) return null;
-              return (
-            <div className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-10 shadow-2xl w-80 text-center">
-              <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="text-7xl block mb-6">{shop.icon}</motion.span>
-              <h3 className="text-3xl font-black text-[#5D4037] mb-2">{shop.name}</h3>
-              <div className="bg-[#FAF9F6] py-3 rounded-2xl border border-[#F3DCC1]/50 mt-4">
-                <p className="text-sm font-bold text-[#F4A460] uppercase tracking-widest">⏰ {shop.hours}</p>
-                <p className="text-[10px] text-[#5D4037]/40 mt-1">ปิดทุกวัน{shop.closed}</p>
-              </div>
-              {shop.items && (
-                <p className="text-xs text-[#5D4037]/60 mt-4">สินค้า: {shop.items.slice(0, 3).join(', ')}{shop.items.length > 3 ? '...' : ''}</p>
-              )}
-            </div>
-              );
-            })()}
           </motion.div>
         )}
 
         {scene.type === 'preview-dual-shop' && (
-          <motion.div key={`dual-shop-card-${scene.shopIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
-            {(() => {
-              return scene.shopIds.map((shopId, index) => {
-                const shop = MOCK_SHOPS[shopId];
-                if (!shop) return null;
-                return (
-                  <motion.div 
-                    key={shopId}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.2 }}
-                    className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-10 shadow-2xl w-80 text-center"
-                  >
-                    <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="text-7xl block mb-6">{shop.icon}</motion.span>
-                    <h3 className="text-3xl font-black text-[#5D4037] mb-2">{shop.name}</h3>
-                    <div className="bg-[#FAF9F6] py-3 rounded-2xl border border-[#F3DCC1]/50 mt-4">
-                      <p className="text-sm font-bold text-[#F4A460] uppercase tracking-widest">⏰ {shop.hours}</p>
-                      <p className="text-[10px] text-[#5D4037]/40 mt-1">ปิดทุกวัน{shop.closed}</p>
-                    </div>
-                    {shop.items && (
-                      <p className="text-xs text-[#5D4037]/60 mt-4">สินค้า: {shop.items.slice(0, 3).join(', ')}{shop.items.length > 3 ? '...' : ''}</p>
-                    )}
-                  </motion.div>
-                );
-              });
-            })()}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-crop' && (
-          <motion.div key={`crop-card-${scene.cropId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
-            {(() => {
-              const crop = MOCK_CROPS[scene.cropId];
-              if (!crop) return null;
+          <motion.div key="dual-shop-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.8 }} className="flex flex-wrap justify-center gap-8 relative z-10">
+            {scene.shopIds.map((shopId, index) => {
+              const shop = MOCK_SHOPS[shopId];
+              if (!shop) return null;
               return (
-            <div className="bg-white border-4 border-[#82A07D]/20 rounded-[40px] p-10 shadow-2xl w-[450px]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <span className="text-6xl">{crop.icon}</span>
-                  <div className="flex flex-col">
-                    <h4 className="text-2xl font-black text-[#1A1A1A]">{crop.name}</h4>
-                    <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs font-bold text-[#8C7E6A] bg-[#F8F7F4] px-4 py-1.5 rounded-full flex items-center gap-1">⏱️ {crop.growDays} วัน</span>
-                      <span className="text-xs font-black text-[#82A07D] flex items-center gap-1">💰 {crop.sellPrice.toLocaleString()} G</span>
-                    </div>
+                <motion.div 
+                  key={shopId}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.3 }}
+                  className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80 text-center"
+                >
+                  <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-6xl block mb-6">{shop.icon}</motion.span>
+                  <h3 className="text-2xl font-black text-[#5D4037] mb-2">{shop.name}</h3>
+                  <div className="bg-[#FAF9F6] py-3 rounded-2xl border border-[#F3DCC1]/50 mt-4">
+                    <p className="text-xs font-bold text-[#F4A460] uppercase tracking-widest">⏰ {shop.hours}</p>
+                    <p className="text-[9px] text-[#5D4037]/40 mt-1">ปิดทุกวัน{shop.closed}</p>
                   </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-3xl font-black text-[#82A07D]">{crop.profitPerDay.toFixed(1)}</span>
-                  <p className="text-[8px] font-bold uppercase text-[#8C7E6A]/50">G / Day</p>
-                </div>
-              </div>
-            </div>
+                  <p className="text-[10px] text-[#5D4037]/60 mt-4 font-bold uppercase tracking-tighter">
+                    สินค้า: {shop.items.slice(0, 2).join(', ')}...
+                  </p>
+                </motion.div>
               );
-            })()}
+            })}
           </motion.div>
         )}
 
         {scene.type === 'preview-dual-crop' && (
-          <motion.div key={`dual-crop-card-${scene.cropIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
-            {(() => {
-              return scene.cropIds.map((cropId, index) => {
-                const crop = MOCK_CROPS[cropId];
-                if (!crop) return null;
-                return (
-                  <motion.div 
-                    key={cropId}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.2 }}
-                    className="bg-white border-4 border-[#82A07D]/20 rounded-[40px] p-10 shadow-2xl w-[450px]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-6">
-                        <span className="text-6xl">{crop.icon}</span>
-                        <div className="flex flex-col">
-                          <h4 className="text-2xl font-black text-[#1A1A1A]">{crop.name}</h4>
-                          <div className="flex items-center gap-3 mt-2">
-                            <span className="text-xs font-bold text-[#8C7E6A] bg-[#F8F7F4] px-4 py-1.5 rounded-full flex items-center gap-1">⏱️ {crop.growDays} วัน</span>
-                            <span className="text-xs font-black text-[#82A07D] flex items-center gap-1">💰 {crop.sellPrice.toLocaleString()} G</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-3xl font-black text-[#82A07D]">{crop.profitPerDay.toFixed(1)}</span>
-                        <p className="text-[8px] font-bold uppercase text-[#8C7E6A]/50">G / Day</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              });
-            })()}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-gifts' && (
-          <motion.div key={`gifts-card-${scene.charId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
-            {(() => {
-              const char = MOCK_CHARACTERS[scene.charId];
-              if (!char) return null;
-              return (
-            <div className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
-              <div className="flex items-center gap-6 mb-6">
-                <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl" style={{ backgroundColor: `${char.color}20` }}>{char.portrait}</div>
-                <div className="min-w-0">
-                  <h3 className="text-2xl font-black text-[#5D4037] leading-none mb-2">{char.name}</h3>
-                  <span className="text-xs font-bold text-[#8C7E6A] uppercase tracking-widest">Gifts Guide</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col items-center bg-[#82A07D]/10 p-4 rounded-3xl border border-[#82A07D]/20">
-                  <span className="text-3xl">⭐</span>
-                  <p className="text-[10px] font-bold text-[#5D4037] mt-2">{char.specialFavorite}</p>
-                </div>
-                <div className="flex flex-col items-center bg-[#E94E4E]/5 p-4 rounded-3xl border border-[#E94E4E]/10 opacity-40 grayscale">
-                  <span className="text-3xl">🗑️</span>
-                  <p className="text-[10px] font-bold text-[#5D4037] mt-2">{char.dislikedItems[0]}</p>
-                </div>
-              </div>
-            </div>
-              );
-            })()}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-gifts' && (
-          <motion.div key={`dual-gifts-card-${scene.charIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
-            {scene.charIds.map((charId, index) => {
-              const char = MOCK_CHARACTERS[charId];
-              if (!char) return null;
+          <motion.div key="dual-crop-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, y: -100 }} className="flex flex-wrap justify-center gap-8 relative z-10">
+            {scene.cropIds.map((cropId, index) => {
+              const crop = MOCK_CROPS[cropId];
+              if (!crop) return null;
               return (
                 <motion.div 
-                  key={charId}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                  className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80"
+                  key={cropId}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.3 }}
+                  className="bg-white border-4 border-[#82A07D]/20 rounded-[40px] p-8 shadow-2xl w-[420px]"
                 >
-                  <div className="flex items-center gap-6 mb-6">
-                    <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl" style={{ backgroundColor: `${char.color}20` }}>{char.portrait}</div>
-                    <div className="min-w-0">
-                      <h3 className="text-2xl font-black text-[#5D4037] leading-none mb-2">{char.name}</h3>
-                      <span className="text-xs font-bold text-[#8C7E6A] uppercase tracking-widest">Gifts Guide</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <span className="text-6xl">{crop.icon}</span>
+                      <div className="flex flex-col">
+                        <h4 className="text-xl font-black text-[#1A1A1A]">{crop.name}</h4>
+                        <span className="text-[10px] font-bold text-[#8C7E6A] mt-1">⏱️ ใช้เวลาโต {crop.growDays} วัน</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col items-center bg-[#82A07D]/10 p-4 rounded-3xl border border-[#82A07D]/20">
-                      <span className="text-3xl">⭐</span>
-                      <p className="text-[10px] font-bold text-[#5D4037] mt-2">{char.specialFavorite}</p>
-                    </div>
-                    <div className="flex flex-col items-center bg-[#E94E4E]/5 p-4 rounded-3xl border border-[#E94E4E]/10 opacity-40 grayscale">
-                      <span className="text-3xl">🗑️</span>
-                      <p className="text-[10px] font-bold text-[#5D4037] mt-2">{char.dislikedItems[0]}</p>
+                    <div className="text-right">
+                      <span className="text-3xl font-black text-[#82A07D]">{crop.profitPerDay}</span>
+                      <p className="text-[8px] font-bold uppercase text-[#8C7E6A]/50">G / Day</p>
                     </div>
                   </div>
                 </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-mixer' && (
-          <motion.div key={`mixer-grid-${scene.equipment}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
-            <div className="flex items-center gap-4 mb-8 bg-[#5D4037] text-white px-6 py-2 rounded-full text-xs tracking-widest">
-              <span>{MOCK_RECIPES[scene.recipes[0]]?.equipment === 'เครื่องปั่น' ? '🥣' : '🍳'} {scene.equipment}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              {scene.recipes.map((recipeId, idx) => {
-                const recipe = MOCK_RECIPES[recipeId];
-                if (!recipe) return null;
-                return (
-                <motion.div key={idx} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: idx * 0.2 }} className="bg-white border-2 border-[#F3DCC1] p-8 rounded-[32px] text-center shadow-lg w-44">
-                  <span className="text-6xl block mb-4">{recipe.icon}</span>
-                  <span className="text-xs font-black uppercase text-[#5D4037]">{recipe.name}</span>
-                </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-mixer' && (
-          <motion.div key={`dual-mixer-grid-${scene.recipes.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
-            {scene.recipes.map((recipeId, index) => {
-              const recipe = MOCK_RECIPES[recipeId];
-              if (!recipe) return null;
-              return (
-                <motion.div 
-                  key={recipeId}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                  className="bg-white border-2 border-[#F3DCC1] p-8 rounded-[32px] text-center shadow-lg w-44"
-                >
-                  <span className="text-6xl block mb-4">{recipe.icon}</span>
-                  <span className="text-xs font-black uppercase text-[#5D4037]">{recipe.name}</span>
-                  <p className="text-[8px] text-[#8C7E6A] mt-2">{recipe.equipment}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-tooltip' && (
-          <motion.div key={`tooltip-ui-${scene.itemId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
-            {(() => {
-              const item = MOCK_ITEMS[scene.itemId];
-              if (!item) return null;
-              return (
-            <div className="relative">
-              <div className="w-32 h-32 bg-white border-2 border-[#F4A460] rounded-[32px] flex items-center justify-center text-6xl shadow-xl">{item.icon}</div>
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-8 p-6 bg-[#1A1A1A] text-white rounded-[32px] w-72 shadow-2xl z-50 border border-white/10">
-                <p className="text-sm font-black text-[#F4A460] border-b border-white/10 pb-3 mb-3 uppercase tracking-widest">{item.name}</p>
-                {item.source && <p className="text-xs mb-1 flex items-center gap-2">{SOURCE_ICONS[item.source] || '📦'} {item.source}</p>}
-                {item.location && <p className="text-xs mb-1">📍 หาได้ที่: {item.location}</p>}
-                {item.season && <p className="text-xs mb-1">🌸 ฤดู: {item.season}</p>}
-                {item.sellPrice && <p className="text-xs">💰 ราคาขาย: {item.sellPrice.toLocaleString()} G</p>}
-                {item.likedBy && item.likedBy.length > 0 && (
-                  <p className="text-xs mt-2 text-[#82A07D]">ชอบโดย: {item.likedBy.join(', ')}</p>
-                )}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-transparent border-t-[#1A1A1A]"></div>
-              </motion.div>
-            </div>
-              );
-            })()}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-tooltip' && (
-          <motion.div key={`dual-tooltip-${scene.itemIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-20 relative z-10">
-            {scene.itemIds.map((itemId, idx) => {
-              const item = MOCK_ITEMS[itemId];
-              if (!item) return null;
-              return (
-                <div key={itemId} className="relative">
-                  <div className="w-32 h-32 bg-white border-2 border-[#F4A460] rounded-[32px] flex items-center justify-center text-6xl shadow-xl">{item.icon}</div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + (idx * 0.2) }} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-8 p-6 bg-[#1A1A1A] text-white rounded-[32px] w-72 shadow-2xl z-50 border border-white/10">
-                    <p className="text-sm font-black text-[#F4A460] border-b border-white/10 pb-3 mb-3 uppercase tracking-widest">{item.name}</p>
-                    {item.location && <p className="text-xs mb-1">📍 {item.location}</p>}
-                    {item.sellPrice && <p className="text-xs">💰 {item.sellPrice.toLocaleString()} G</p>}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-transparent border-t-[#1A1A1A]"></div>
-                  </motion.div>
-                </div>
               );
             })}
           </motion.div>
         )}
 
         {scene.type === 'preview-dual-calendar' && (
-          <motion.div key="dual-calendar" variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key="dual-calendar" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.8 }} className="flex items-center gap-8 relative z-10">
             {scene.events.map((evt, idx) => {
               const seasonInfo = MOCK_EVENTS[evt.seasonId];
               if (!seasonInfo) return null;
@@ -828,29 +492,6 @@ const ShowcaseReel = ({ onFinish }) => {
                     ))}
                   </div>
                   <p className="text-sm font-bold text-[#F4A460]">🎂 Day {evt.eventDay}</p>
-                </div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-modal' && (
-          <motion.div key="dual-modal" variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
-            {scene.recipeIds.map((id, idx) => {
-              const recipe = MOCK_RECIPES[id];
-              if (!recipe) return null;
-              return (
-                <div key={id} className="bg-[#FCFBF7] border-[6px] border-double border-[#8C7E6A]/20 p-8 shadow-2xl rounded-[40px] w-[340px] text-center">
-                  <span className="text-6xl block mb-4">{recipe.icon}</span>
-                  <h3 className="text-2xl font-black text-[#1A1A1A] mb-2">{recipe.name}</h3>
-                  <p className="text-[8px] font-bold text-[#8C7E6A] uppercase mb-4 tracking-widest">{recipe.equipment}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {recipe.ingredients.map((ing, i) => (
-                      <div key={i} className="bg-white p-2 rounded-xl text-[9px] font-bold flex items-center gap-2 border border-[#8C7E6A]/10">
-                        <span>{ing.icon}</span> {ing.name}
-                      </div>
-                    ))}
-                  </div>
                 </div>
               );
             })}
@@ -915,41 +556,6 @@ const ShowcaseReel = ({ onFinish }) => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Background Visual Flair: Dynamic Pattern */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.015] overflow-hidden select-none">
-        <motion.div
-          animate={{ 
-            rotate: currentScene * 45,
-            scale: [1, 1.1, 1]
-          }}
-          className="absolute -inset-[100%] flex flex-wrap items-center justify-center gap-20 p-20 select-none"
-        >
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="text-[14rem] font-black">GALABON</span>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Background Kinetic Lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05]">
-        <motion.div 
-          key={`line-1-${currentScene}`}
-          animate={{ 
-            x: [-500, 500],
-            transition: { duration: 0.5, repeat: Infinity, ease: "linear" }
-          }}
-          className="absolute top-1/4 left-0 right-0 h-[1px] bg-[#5D4037]"
-        />
-        <motion.div 
-          key={`line-2-${currentScene}`}
-          animate={{ 
-            x: [500, -500],
-            transition: { duration: 0.3, repeat: Infinity, ease: "linear" }
-          }}
-          className="absolute bottom-1/3 left-0 right-0 h-[1px] bg-[#F4A460]"
-        />
-      </div>
     </div>
   );
 };

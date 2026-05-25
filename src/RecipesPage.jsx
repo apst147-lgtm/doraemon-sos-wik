@@ -32,8 +32,9 @@ const RecipeListItem = React.memo(({
   recipe, 
   isSelected, 
   onToggle, 
-  onOpenDetail, 
-  targetStars 
+  onOpenDetail,
+  targetStars,
+  ingredientDb
 }) => {
   const theme = EQUIPMENT_THEMES[recipe.equipment];
   const currentProfit = Math.floor((recipe.sell * targetStars.multiplier) - (recipe.cost || 0));
@@ -42,11 +43,11 @@ const RecipeListItem = React.memo(({
   return (
     <motion.div
       variants={itemVariants}
-      whileHover={{ scale: 1.015, boxShadow: "0 15px 40px -15px rgba(93, 64, 55, 0.12)", zIndex: 10 }}
+      whileHover={{ scale: 1.01, boxShadow: "0 20px 40px -20px rgba(93, 64, 55, 0.15)", zIndex: 10 }}
       className={cn(
-        "group flex items-center gap-6 border-b border-[#EBE9E4] py-6 px-4 transition-all relative z-0",
+        "group flex items-center gap-6 border-b border-[#EBE9E4] py-6 px-6 transition-all relative z-0 mb-2 rounded-3xl",
         theme?.baseBg || "bg-white",
-        theme?.hoverBg || "hover:bg-[#FAF9F6]"
+        "hover:bg-white"
       )}
     >
       <button 
@@ -68,14 +69,27 @@ const RecipeListItem = React.memo(({
           </div>
 
           {/* ส่วนวัตถุดิบ */}
-          <div className="hidden md:flex flex-1 max-w-md gap-x-1.5 flex-wrap items-center">
+          <div className="hidden md:flex flex-1 max-w-md gap-2 flex-wrap items-center">
             {recipe.ingredients?.map((ing, i) => {
               const ingName = typeof ing === 'string' ? ing : ing.name;
-              const hasTooltip = typeof ing === 'object' && (ing.note || ing.alternatives || ing.buyPrice !== undefined);
+              const detail = ingredientDb[ingName] || (typeof ing === 'object' ? ing : null);
+              
               return (
-                <span key={i} className={cn("text-[11px] text-[#5F5D59]/70 italic", hasTooltip && "underline decoration-dotted cursor-help")}>
-                  {ingName}{i < recipe.ingredients.length - 1 ? ',' : ''}
-                </span>
+                <div key={i} className="group/ing relative">
+                  <div className="flex items-center gap-1 bg-white/50 border border-[#8C7E6A]/10 px-2 py-1 rounded-full text-[10px] text-[#5D4037] hover:border-[#F4A460] hover:bg-white transition-all cursor-help">
+                    <span>{INGREDIENT_ICONS[ingName] || '📦'}</span>
+                    {ingName}
+                  </div>
+                  {/* Mini Tooltip */}
+                  {detail && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-3 bg-[#1A1A1A] text-white rounded-2xl opacity-0 group-hover/ing:opacity-100 transition-all z-50 pointer-events-none w-48 shadow-2xl scale-90 group-hover/ing:scale-100 origin-bottom border border-white/10">
+                      <p className="text-[10px] font-black text-[#F4A460] uppercase mb-1">{ingName}</p>
+                      {detail.source && <p className="text-[9px] opacity-70">📍 {detail.source}</p>}
+                      {detail.buyPrice !== undefined && <p className="text-[9px] text-[#82A07D] font-bold">💰 {detail.buyPrice} G</p>}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-[#1A1A1A]"></div>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -717,6 +731,7 @@ const RecipesPage = ({ onBack, initialSearch = '' }) => {
               onToggle={handleRowToggle}
               onOpenDetail={setSelectedRecipe}
               targetStars={targetStars}
+              ingredientDb={ingredientDb}
               />
             ))}
           </motion.div>
