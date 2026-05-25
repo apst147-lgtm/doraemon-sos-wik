@@ -198,19 +198,6 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  const LoadingFallback = () => (
-    <div className="flex-1 flex flex-col items-center justify-center py-40">
-      <motion.span 
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        className="text-4xl mb-4"
-      >
-        🥣
-      </motion.span>
-      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#8C7E6A]/40">Loading Kitchen...</p>
-    </div>
-  );
-
   return (
     <div className="min-h-screen w-full bg-[#FFF9F0] text-[#5D4037] font-sans selection:bg-[#82A07D] flex flex-col items-center">
       {/* Showcase Reel Overlay */}
@@ -281,7 +268,6 @@ const App = () => {
             onClick={scrollToTop}
             aria-label="Back to top"
             className="fixed bottom-10 right-10 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-[#F3DCC1] bg-white/80 text-[#F4A460] shadow-lg backdrop-blur-md transition-colors duration-300"
-            aria-label="Back to top"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -299,5 +285,18 @@ const App = () => {
     </div>
   );
 };
+
+const LoadingFallback = () => (
+  <div className="flex-1 flex flex-col items-center justify-center py-40">
+    <motion.span 
+      animate={{ rotate: 360 }}
+      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+      className="text-4xl mb-4"
+    >
+      🥣
+    </motion.span>
+    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#8C7E6A]/40">Loading Kitchen...</p>
+  </div>
+);
 
 export default App;

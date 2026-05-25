@@ -255,7 +255,7 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
             aria-label={`Show ${cat.name} category`}
-            className={cn("px-8 py-3 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative", // Smaller padding
+            className={cn(
               "px-10 py-4 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative",
               activeCategory === cat.id ? "text-[#1A1A1A]" : "text-[#8C7E6A]/40 hover:text-[#8C7E6A]"
             )}

@@ -1,499 +1,379 @@
+const COMMON_DISLIKES = ['ขยะตกปลา', 'วัชพืช', 'กิ่งไม้ธรรมดาที่ยังไม่แปรรูป', 'อาหารที่ทำพลาด'];
+const GIRL_DISLIKES = [...COMMON_DISLIKES, 'แมลง', 'กบ'];
+
 export const CHARACTERS = [
+  // --- กลุ่มเพื่อนโดราเอมอน ---
   {
-    id: 'nobita',
-    name: 'โนบิตะ',
-    category: "เขตฟาร์ม",
-    color: '#FFD93D',
-    bio: 'หนุ่มน้อยผู้มีหัวใจนุ่มฟู อาศัยอยู่ที่ไร่โนบิ รักการงีบหลับและชอบกินปลาดิบเป็นที่สุด',
-    portrait: '👦🏻',
-    favoriteItems: ['มาร์ลินสเต็ก', 'เรือซาชิมิ'],
-    specialFavorite: 'ซาชิมิ',
-    dislikedItems: ['ขยะ'],
-    birthday: '7 ฤดูร้อน',
-    location: 'ไร่โนบิ'
+    id: 'doraemon',
+    name: 'โดราเอมอน',
+    category: "ตัวละครหลัก",
+    color: '#6BCBFF',
+    bio: 'หุ่นยนต์แมวจากอนาคต ผู้หลงรักการกินแป้งทอดโดรายากิเป็นที่สุด',
+    portrait: '🐱',
+    favoriteItems: ['ดอกทานตะวัน', 'แตงโม'],
+    specialFavorite: 'โดรายากิ',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '28 ฤดูใบไม้ผลิ',
+    location: 'บ้านยาเม'
   },
   {
     id: 'shizuka',
     name: 'ชิซุกะ',
-    category: "ซีเซ็นตะวันออก",
+    category: "ตัวละครหลัก",
     color: '#FF8AAE',
-    bio: 'สาวน้อยผู้ใจดีและรักการอาบน้ำ ทำงานอยู่ที่โรงพยาบาล ชอบกินมันเผาเป็นชีวิตจิตใจ',
+    bio: 'สาวน้อยผู้ใจดีและรักสะอาด ทำงานอยู่ที่โรงพยาบาล',
     portrait: '👧🏻',
     favoriteItems: ['ชีสเค้ก', 'มันเทศ', 'ดอกเพนนีเดซี่'],
     specialFavorite: 'มันเผา',
-    dislikedItems: ['แมลงทุกชนิด', 'กบ', 'ขยะ'],
+    dislikedItems: GIRL_DISLIKES, // 'แมลงทุกชนิด' is already covered by 'แมลง' in GIRL_DISLIKES
     birthday: '8 ฤดูใบไม้ผลิ',
     location: 'โรงพยาบาล'
   },
   {
-    id: 'suneo',
-    name: 'ซูเนโอะ',
-    category: "ป่ากัลลาบอน",
-    color: '#4D96FF',
-    bio: 'เด็กชายผู้ร่ำรวยและชอบอวดของเล่น ทำงานอยู่ที่ร้านอาหาร หลงรักอาหารรสเลิศ',
-    portrait: '🧒🏻',
-    favoriteItems: ['สเต็กปลา', 'เมลอน'],
-    specialFavorite: 'ไข่ทรัฟเฟิล',
-    dislikedItems: ['ของป่าที่เก็บจากพื้น', 'ขยะ'],
-    birthday: '28 ฤดูใบไม้ผลิ',
-    location: 'ร้านอาหาร'
-  },
-  {
     id: 'gian',
     name: 'ไจแอนท์',
-    category: "ซีเซ็นตะวันตก",
+    category: "ตัวละครหลัก",
     color: '#FF6B6B',
-    bio: 'ผู้มีพลังและความฝันจะเป็นนักร้อง ทำงานอยู่ที่ร้านตีเหล็ก รักพวกพ้องและแกงกะหรี่',
+    bio: 'ผู้มีพลังมหาศาลและความฝันที่จะเป็นนักร้อง ทำงานอยู่ที่ร้านตีเหล็ก',
     portrait: '👦🏻',
     favoriteItems: ['ไม้ธรรมดา', 'สตูว์', 'แมลงตั๊กแตน'],
     specialFavorite: 'แกงกะหรี่',
-    dislikedItems: ['ของป่าที่เก็บจากพื้น', 'ขยะ'],
+    dislikedItems: COMMON_DISLIKES,
     birthday: '15 ฤดูร้อน',
     location: 'ร้านตีเหล็ก'
   },
   {
-    id: 'doraemon',
-    name: 'โดราเอมอน',
-    category: "ซีเซ็นตะวันออก",
-    color: '#6BCBFF',
-    bio: 'หุ่นยนต์แมวตัวกลมเหมือนขนมไดฟูกุ เขายอมแลกของวิเศษทุกชิ้นเพื่อให้ได้ลิ้มรสความหอมหวานของแป้งทอดโดรายากิ',
-    portrait: '🐱',
-    favoriteItems: ['ซุปข้าวโพด', 'ดอกทานตะวัน'],
-    specialFavorite: 'โดรายากิ',
-    dislikedItems: ['ขยะ', 'ของป่า'],
+    id: 'suneo',
+    name: 'ซูเนโอะ',
+    category: "ตัวละครหลัก",
+    color: '#4D96FF',
+    bio: 'เด็กชายผู้ร่ำรวยที่ชอบอวดของเล่น ทำงานอยู่ที่ร้านอาหาร',
+    portrait: '🧒🏻',
+    favoriteItems: ['สเต็กปลา', 'เมลอน'],
+    specialFavorite: 'ไข่ทรัฟเฟิล',
+    dislikedItems: [...COMMON_DISLIKES, 'ของป่าที่เก็บจากพื้นบางชนิด'],
     birthday: '28 ฤดูใบไม้ผลิ',
-    location: 'ที่ว่าการเมือง'
+    location: 'ร้านอาหาร'
   },
+
+  // --- บ้านนายกเทศมนตรี ---
   {
-    id: 'mark',
-    name: 'มาร์ค',
-    category: "ป่ากัลลาบอน",
-    color: '#FFCCB3',
-    bio: 'ราชาแห่งครัวเดลิซ ผู้เปลี่ยนวัตถุดิบดิบจากฟาร์มให้กลายเป็นงานศิลปะที่ทานได้ด้วยพรสวรรค์และไฟในหัวใจ',
-    portrait: '👨‍🍳',
-    favoriteItems: ['พิซซ่า', 'กะหล่ำดอก'],
-    specialFavorite: 'กราแตง',
-    dislikedItems: ['ขยะ'],
-    birthday: '17 ฤดูหนาว',
-    location: 'ร้านอาหารเดลิซ'
-  },
-  {
-    id: 'cafet',
-    name: 'คลาเฟ่',
-    category: "ป่ากัลลาบอน",
-    color: '#FFADAD',
-    bio: 'เทพธิดาแห่งของหวานประจำร้านเดลิซ เธอเชื่อว่าความเหนื่อยล้าจากการทำงานหนักสามารถรักษาได้ด้วยเค้กสตอเบอร์รี่หนึ่งชิ้น',
-    portrait: '👩‍🍳',
-    favoriteItems: ['พุดดิ้ง', 'สตรอว์เบอร์รี'],
-    specialFavorite: 'ชอร์ตเค้ก',
-    dislikedItems: ['ขยะ'],
-    birthday: '12 ฤดูใบไม้ผลิ',
-    location: 'ร้านอาหารเดลิซ'
-  },
-  {
-    id: 'gunter',
-    name: 'กันเทอร์',
-    category: "ซีเซ็นตะวันตก",
-    color: '#D4ADFC',
-    bio: 'ช่างไม้จอมพลังผู้มีร่างกายแข็งแกร่งเหมือนเนื้อไม้ แต่กลับมีความสุนทรีย์ในการลิ้มรสซาชิมิสดๆ ยามพักเที่ยง',
-    portrait: '🔨',
-    favoriteItems: ['ซาชิมิ', 'ไม้', 'แร่เหล็ก'],
-    specialFavorite: 'ซาชิมิ',
-    dislikedItems: ['ขยะ'],
-    birthday: '5 ฤดูใบไม้ร่วง',
-    location: 'ร้านช่างไม้'
-  },
-  {
-    id: 'smitty',
-    name: 'สมิธ',
-    category: "ซีเซ็นตะวันตก",
-    color: '#829460',
-    bio: 'ช่างตีเหล็กผู้ร้อนแรงเหมือนเตาหลอม กลิ่นขิงสดคือสิ่งที่ช่วยให้จิตใจที่เคร่งขรึมของเขาสงบลงท่ามกลางเสียงค้อน',
-    portrait: '⚒️',
-    favoriteItems: ['แร่ทองแดง', 'แร่เหล็ก'],
-    specialFavorite: 'ขิง',
-    dislikedItems: ['ขยะ'],
-    birthday: '10 ฤดูหนาว',
-    location: 'ร้านตีเหล็ก'
-  },
-  {
-    id: 'helen',
-    name: 'เฮเลน',
-    category: "ซีเซ็นตะวันตก", // Fandom: Smitty's wife
-    color: '#26A69A',
-    bio: 'ภรรยาผู้ร่าเริงของสมิธ เธอคอยดูแลความเรียบร้อยในร้านตีเหล็กและหลงรักการเก็บวอลนัทในป่าเป็นที่สุด',
-    portrait: '👩‍🍳', // Fandom: Helen
-    favoriteItems: ['ว่านหางจระเข้', 'วอลนัท', 'แอปเปิ้ล'],
-    specialFavorite: 'วอลนัท',
-    dislikedItems: ['ขยะ'],
-    birthday: '4 ฤดูใบไม้ร่วง',
-    location: 'ร้านตีเหล็ก'
-  },
-  {
-    id: 'knuckle',
-    name: 'นัคเคิล',
-    category: "ซีเซ็นตะวันออก",
+    id: 'yame',
+    name: 'รียัม (ยาเม)',
+    category: "บ้านนายกเทศมนตรี",
     color: '#8D6E63',
-    bio: 'เจ้าของร้านขายของชำนัคเคิลผู้ใจดี เขาชอบสะสมวัตถุดิบคุณภาพเยี่ยมและชอบทานกราแตงร้อนๆ เป็นที่สุด',
-    portrait: '🧔🏻',
-    favoriteItems: ['กราแตง', 'เห็ดมัตสึทาเกะ'],
-    specialFavorite: 'กราแตง',
-    dislikedItems: ['ขยะ'],
-    birthday: '1 ฤดูร้อน',
-    location: 'ร้านขายของชำนัคเคิล'
+    bio: 'นายกเทศมนตรีเมืองเนทูระ ผู้เข้มงวดและมีระเบียบวินัย',
+    portrait: '👴🏻',
+    favoriteItems: ['หัวไชเท้า', 'เห็ดมัตสึทาเกะ', 'อัญมณีรูบี้'],
+    specialFavorite: 'ซาชิมิชุดใหญ่',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'บ้านนายกเทศมนตรี'
   },
   {
-    id: 'pasch',
-    name: 'ปาสก์',
-    category: "ซีเซ็นตะวันออก",
-    color: '#FF9B9B',
-    bio: 'คุณหมอหนุ่มผู้มุ่งมั่น รักความสมบูรณ์แบบเหมือนกราแตงกะหล่ำดอกที่อบจนชีสเหลืองทองพอดี',
-    portrait: '👨‍⚕️',
-    favoriteItems: ['กราแตง', 'กะหล่ำดอก', 'ชีส'],
-    specialFavorite: 'กราแตง',
-    dislikedItems: ['ขยะ'],
-    birthday: '11 ฤดูหนาว',
-    location: 'สถานพยาบาลร็อคโกะ'
+    id: 'rem',
+    name: 'เรม (น้องเรม)',
+    category: "บ้านนายกเทศมนตรี",
+    color: '#6BCBFF',
+    bio: 'เด็กน้อยผู้อาศัยอยู่ที่บ้านนายกเทศมนตรี เป็นเพื่อนเล่นกับโนบิตะ',
+    portrait: '👦🏻',
+    favoriteItems: ['ดอกแดนดิไลออน', 'ขนแกะ'],
+    specialFavorite: 'พุดดิ้ง',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'บ้านนายกเทศมนตรี'
+  },
+
+  // --- บ้านฟาร์ม ---
+  {
+    id: 'ranchi',
+    name: 'รันจิ',
+    category: "บ้านฟาร์ม",
+    color: '#A0D995',
+    bio: 'หลานของคุณย่าพาสชี่ เป็นคนแรกที่พบกับกลุ่มของโนบิตะ',
+    portrait: '👦🏻',
+    favoriteItems: ['ปุ๋ย', 'ดอกพิงค์', 'สลัดฤดูใบไม้ร่วง'],
+    specialFavorite: 'นามะสึ',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'บ้านรันจิ'
   },
   {
-    id: 'gena',
-    name: 'เจนน่า',
-    category: "ซีเซ็นตะวันออก",
-    color: '#FFDEB4',
-    bio: 'ภรรยาของนัคเคิลที่ช่วยดูแลร้านขายของชำ เธอมีรสนิยมลุ่มลึกและชอบทานมองบลังค์เป็นที่สุด',
-    portrait: '🛍️',
-    favoriteItems: ['พุดดิ้ง', 'เกาลัด'],
-    specialFavorite: 'มองบลังค์',
-    dislikedItems: ['ขยะ'],
-    birthday: '2 ฤดูใบไม้ผลิ',
-    location: 'ร้านขายของชำนัคเคิล'
+    id: 'passchy',
+    name: 'คุณย่าพาสชี่',
+    category: "บ้านฟาร์ม",
+    color: '#FFD966',
+    bio: 'คุณย่าผู้ใจดี ผู้ให้คำแนะนำเรื่องการทำฟาร์ม',
+    portrait: '👵🏻',
+    favoriteItems: ['ข้าวสาลี', 'ดอกคาร์เนชั่น'],
+    specialFavorite: 'คาร์ปาชโช่',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'บ้านรันจิ'
   },
+
+  // --- ร้านช่างไม้ ---
   {
-    id: 'vera',
-    name: 'วีร่า (เทพธิดา)',
-    category: "เขตลึกลับ",
-    color: '#97DECE',
-    bio: 'จิตวิญญาณแห่งพฤกษาผู้สง่างามและบริสุทธิ์เหมือนโยเกิร์ตสดใหม่ในยามเช้า พืชผลที่สดใสคือสิ่งที่ทำให้เธอแย้มยิ้ม',
-    portrait: '🧚',
-    favoriteItems: ['กะหล่ำปลี', 'โยเกิร์ต'],
-    specialFavorite: 'โยเกิร์ต',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ต้นไม้ใหญ่'
-  },
-  {
-    id: 'bully',
-    name: 'บุลลี่',
-    category: "ซีเซ็นตะวันออก",
-    color: '#7895B2',
-    bio: 'ยามเฝ้าเมืองผู้แข็งแกร่งที่มีร่างกายบึกบึนเหมือนสเต็กปลามาร์ลินชิ้นหนา เขามีวินัยที่เคร่งครัดพอๆ กับรสสัมผัสของอาหารปิ้งย่าง',
-    portrait: '💂🏻',
-    favoriteItems: ['มาร์ลินสเต็ก', 'เหยื่อตกปลา'],
-    specialFavorite: 'มาร์ลินสเต็ก',
-    dislikedItems: ['ขยะ'],
-    birthday: '12 ฤดูใบไม้ร่วง',
-    location: 'ทางเข้าเมือง / ด่านตรวจ'
+    id: 'pant',
+    name: 'แพนท์',
+    category: "ร้านช่างไม้",
+    color: '#D4ADFC',
+    bio: 'หัวหน้าช่างไม้ประจำเมืองเนทูระ',
+    portrait: '🔨',
+    favoriteItems: ['ไม้เนื้อแข็ง', 'โอเด้ง'],
+    specialFavorite: 'อุด้ง',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '5 ฤดูใบไม้ร่วง',
+    location: 'ร้านป๊อกป๊อกป๊อก'
   },
   {
     id: 'ram',
-    name: 'ราม',
-    category: "ซีเซ็นตะวันออก",
-    color: '#FFEBB7',
-    bio: 'ผู้ช่วยนายกที่ทำงานหนักจนหัวหมุน เขาต้องการความหวานละมุนของพุดดิ้งเพื่อเยียวยาจิตใจที่เหนื่อยล้าจากการเคลียร์เอกสาร',
-    portrait: '🤵🏻',
-    favoriteItems: ['พุดดิ้ง', 'ดอกแดนดิไลออน'],
-    specialFavorite: 'พุดดิ้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '17 ฤดูใบไม้ผลิ',
-    location: 'ที่ว่าการเมือง'
+    name: 'รัม (เจมม่า)',
+    category: "ร้านช่างไม้",
+    color: '#FFCCB3',
+    bio: 'ลูกสาวของช่างไม้แพนท์ ผู้ร่าเริงและเป็นมิตร',
+    portrait: '👩‍🌾',
+    favoriteItems: ['แครอท', 'พุดดิ้ง', 'ดอกเพนนีเดซี่'],
+    specialFavorite: 'ทาร์ตแอปเปิล',
+    dislikedItems: GIRL_DISLIKES,
+    birthday: '??',
+    location: 'ร้านป๊อกป๊อกป๊อก'
   },
+
+  // --- ร้านตีเหล็ก ---
   {
-    id: 'ethel',
-    name: 'เอทิล',
-    category: "ซีเซ็นตะวันออก",
-    color: '#FFD966',
-    bio: 'คุณยายผู้เปี่ยมด้วยปัญญาและความเมตตา อบอุ่นและนุ่มนวลเหมือนซุปฟักทองในฤดูหนาวที่คอยปลอบประโลมหัวใจทุกคน',
-    portrait: '👵🏻',
-    favoriteItems: ['ฟักทอง', 'อัญมณี'],
-    specialFavorite: 'ฟักทอง',
-    dislikedItems: ['ขยะ'],
-    birthday: '4 ฤดูหนาว',
-    location: 'ที่ว่าการเมือง / บ้านนายกเทศมนตรี'
-  },
-  {
-    id: 'harmon',
-    name: 'ฮาร์มอน',
-    category: "ซีเซ็นตะวันตก",
-    color: '#A7727D',
-    bio: 'ช่างตีเหล็กอาวุโสผู้หลงใหลในความกรอบเกรียมของเทมปุระ ความร้อนจากเตาหลอมทำให้เขารู้จักรสชาติของความอดทน',
-    portrait: '👨‍🏭',
-    favoriteItems: ['เทมปุระ', 'แร่ทอง'],
-    specialFavorite: 'เทมปุระ',
-    dislikedItems: ['ขยะ'],
+    id: 'smitty',
+    name: 'สมีตตี้',
+    category: "ร้านตีเหล็ก",
+    color: '#829460',
+    bio: 'ช่างตีเหล็กผู้เชี่ยวชาญ คอยอัปเกรดเครื่องมือให้พวกเรา',
+    portrait: '⚒️',
+    favoriteItems: ['แร่ทองแดง', 'นามะสึ'],
+    specialFavorite: 'ปลาคัตสึโอะย่าง',
+    dislikedItems: COMMON_DISLIKES,
     birthday: '10 ฤดูหนาว',
-    location: 'ร้านตีเหล็ก'
+    location: 'ร้านกิ๊งก๊องแก๊ง'
   },
   {
-    id: 'vee',
-    name: 'วี',
-    category: "ซีเซ็นตะวันออก",
-    color: '#F9B5D0',
-    bio: 'นางพยาบาลผู้อ่อนโยน เธอเชื่อว่ากราแตงร้อนๆ และถั่ววอลนัทคือซุปเปอร์ฟู้ดที่จะช่วยให้ทุกคนในเมืองอายุยืนยาว',
-    portrait: '👩‍🔬',
-    favoriteItems: ['วอลนัท'],
-    specialFavorite: 'กราแตง',
-    dislikedItems: ['ขยะ'],
-    birthday: '23 ฤดูใบไม้ร่วง',
-    location: 'สถานพยาบาลร็อคโกะ'
+    id: 'block',
+    name: 'บล็อก',
+    category: "ร้านตีเหล็ก",
+    color: '#7895B2',
+    bio: 'หลานชายของช่างตีเหล็กสมีตตี้',
+    portrait: '🧒🏻',
+    favoriteItems: ['แร่เหล็ก', 'แตงกวา'],
+    specialFavorite: 'อะฮิโญ่',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'ร้านกิ๊งก๊องแก๊ง'
+  },
+
+  // --- ร้านขายไก่ ---
+  {
+    id: 'helen',
+    name: 'เฮเลน',
+    category: "ร้านขายไก่",
+    color: '#FFADAD',
+    bio: 'เจ้าของร้านขายไก่เอ้กอีเอ้กเฮ้าส์',
+    portrait: '🐔',
+    favoriteItems: ['สตรอเบอร์รี่', 'ปลาทอง', 'ไข่ไก่'],
+    specialFavorite: 'ขนมปังวอลนัท',
+    dislikedItems: GIRL_DISLIKES,
+    birthday: '4 ฤดูใบไม้ร่วง',
+    location: 'ร้านเอ้กอีเอ้กเฮ้าส์'
   },
   {
-    id: 'cooper',
-    name: 'คูเปอร์',
-    category: "ป่ากัลลาบอน",
-    color: '#FFF5E4',
-    bio: 'เด็กน้อยจอมซนที่ฝันอยากเป็นยอดเชฟเหมือนพ่อ เขาสามารถกินเฟรนช์ฟรายส์ได้ทั้งวันโดยไม่เบื่อเลยล่ะ',
-    portrait: '👦🏻',
-    favoriteItems: ['เฟรนช์ฟรายส์', 'ข้าวโพด'],
-    specialFavorite: 'เฟรนช์ฟรายส์',
-    dislikedItems: ['ผัก', 'ขยะ'],
-    birthday: '18 ฤดูหนาว',
-    location: 'ร้านอาหารเดลิซ'
-  },
-  {
-    id: 'sera',
-    name: 'เซร่า',
-    category: "ซีเซ็นตะวันออก", // Fandom: Knuckle's daughter
-    color: '#FF9E9E',
-    bio: 'ลูกสาวคนกลางผู้ร่าเริงสดใสเหมือนสตอเบอร์รี่สดใหม่ ความฝันของเธอคือการได้ทานกราแตงฝีมือคุณหมอปาสก์',
-    portrait: '👧🏻', // Fandom: Sera
-    favoriteItems: ['สตรอว์เบอร์รี', 'กราแตง'],
-    specialFavorite: 'กราแตง',
-    dislikedItems: ['ขยะ'],
-    birthday: '23 ฤดูใบไม้ผลิ',
-    location: 'ร้านขายของชำนัคเคิล'
-  },
-  {
-    id: 'penny',
-    name: 'เพนนี',
-    category: "ซีเซ็นตะวันออก",
+    id: 'chick',
+    name: 'ชิค (ฮาร์มอน)',
+    category: "ร้านขายไก่",
     color: '#FFF9B0',
-    bio: 'ลูกสาวคนเล็กจอมขี้อายที่มีจิตใจอ่อนละมุนเหมือนชีสเค้กอบใหม่ เธอชอบความหอมหวานของแอปริคอทในวันแดดจ้า',
-    portrait: '👶🏻',
-    favoriteItems: ['แอปริคอท'],
-    specialFavorite: 'ชีสเค้ก',
-    dislikedItems: ['ขยะ'],
-    birthday: '14 ฤดูร้อน',
-    location: 'ร้านขายของชำนัคเคิล'
+    bio: 'เด็กชายจากร้านขายไก่ มีความรับผิดชอบสูง',
+    portrait: '👦🏻',
+    favoriteItems: ['อาหารสัตว์', 'มันฝรั่ง', 'ดอกทานตะวัน'],
+    specialFavorite: 'เทมปุระ',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '22 ฤดูใบไม้ผลิ',
+    location: 'ร้านเอ้กอีเอ้กเฮ้าส์'
+  },
+
+  // --- คลินิก ---
+  {
+    id: 'locod',
+    name: 'หมอโลค็อด',
+    category: "สถานพยาบาล",
+    color: '#FF9B9B',
+    bio: 'หมอประจำเมืองเนทูระ ผู้เคร่งขรึมและมีรสนิยมแปลกปะหลาด',
+    portrait: '👨‍⚕️',
+    favoriteItems: ['เครื่องเทศ', 'ผัดผัก'],
+    specialFavorite: 'อาหารประหลาด',
+    dislikedItems: [],
+    birthday: '11 ฤดูหนาว',
+    location: 'โรงพยาบาล'
   },
   {
-    id: 'nene',
-    name: 'เนเน่',
-    category: "ซีเซ็นตะวันออก", // Fandom: Knuckle's daughter
-    color: '#C3ACD0',
-    bio: 'ลูกสาวคนโตผู้เคร่งครัดและรับผิดชอบสูง เธอหลงรักในรสสัมผัสที่ซับซ้อนของเกาลัดคั่วและของหวานระดับสูงอย่างมองบลังค์',
-    portrait: '👧🏻', // Fandom: Nene
-    favoriteItems: ['มองบลังค์', 'เกาลัด'],
-    specialFavorite: 'มองบลังค์',
-    dislikedItems: ['ขยะ'],
-    birthday: '26 ฤดูใบไม้ร่วง',
-    location: 'ร้านขายของชำนัคเคิล'
+    id: 'serena',
+    name: 'พยาบาลเซเรน่า',
+    category: "สถานพยาบาล",
+    color: '#F9B5D0',
+    bio: 'พยาบาลผู้อ่อนโยน คอยช่วยเหลือคุณหมอ',
+    portrait: '👩‍⚕️',
+    favoriteItems: ['ดอกกุหลาบแดง', 'ว่านหางจระเข้'],
+    specialFavorite: 'ชอร์ตเค้ก',
+    dislikedItems: GIRL_DISLIKES,
+    birthday: '23 ฤดูใบไม้ร่วง',
+    location: 'โรงพยาบาล'
+  },
+
+  // --- ร้านขายสัตว์ / ของชำ ---
+  {
+    id: 'blue',
+    name: 'บลู (คาเฟต)',
+    category: "ร้านขายสัตว์ / ของชำ",
+    color: '#E2F0D9',
+    bio: 'เจ้าของร้านสัตว์เลี้ยงที่มีจิตใจอ่อนโยน',
+    portrait: '🐶',
+    favoriteItems: ['แอปเปิล', 'ฟักทอง', 'อาหารสัตว์'],
+    specialFavorite: 'แซนด์วิช',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '12 ฤดูใบไม้ผลิ',
+    location: 'ร้านกูเตมอค'
   },
   {
-    id: 'sheila',
-    name: 'เชลล่า',
-    category: "ชายหาดซาซา",
+    id: 'henson',
+    name: 'เฮนสัน',
+    category: "ร้านขายสัตว์ / ของชำ",
+    color: '#FFDEB4',
+    bio: 'คุณลุงที่คอยดูแลและให้ความรู้เรื่องสัตว์',
+    portrait: '👴🏻',
+    favoriteItems: ['ชีส', 'กราแตง'],
+    specialFavorite: 'ฟริตเตอร์',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '1 ฤดูร้อน',
+    location: 'ร้านสัตว์'
+  },
+  
+  // --- ร้านอาหาร ---
+  {
+    id: 'tuto',
+    name: 'ทูโต',
+    category: "ร้านอาหาร",
+    color: '#FFCCB3',
+    bio: 'เจ้าของร้านอาหารผู้รังสรรค์เมนูอร่อย',
+    portrait: '👨‍🍳',
+    favoriteItems: ['นม', 'บ๊วย'],
+    specialFavorite: 'ปลาต้มหัวไชเท้า',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '17 ฤดูหนาว',
+    location: 'ร้านอาหาร'
+  },
+  {
+    id: 'ruro',
+    name: 'รูโร',
+    category: "ร้านอาหาร",
+    color: '#B9E0FF',
+    bio: 'พนักงานประจำร้านอาหาร ผู้เงียบขรึม',
+    portrait: '🤵🏻',
+    favoriteItems: ['ถั่วลันเตา', 'ดอกไอริส'],
+    specialFavorite: 'ปลาคาร์พต้ม',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '1 ฤดูใบไม้ร่วง',
+    location: 'ร้านง่ำง่ำ'
+  },
+
+  // --- ชาวเมืองคนอื่นๆ ---
+  {
+    id: 'seffy',
+    name: 'ซีฟี่',
+    category: "ชาวเมืองเนทูระ",
     color: '#91D8E4',
-    bio: 'ราชินีแห่งท้องทะเลผู้รักสันโดษ เธอมีความแข็งแกร่งเหมือนเปลือกกุ้งมังกรแต่ซ่อนหัวใจที่อ่อนโยนไว้ภายใน',
+    bio: 'นักตกปลาผู้ยิ่งใหญ่ ชื่นชอบท้องทะเลและปลาอินทรี',
     portrait: '🎣',
-    favoriteItems: ['กุ้ง'],
-    specialFavorite: 'กุ้งมังกร',
-    dislikedItems: ['ขยะ'],
+    favoriteItems: ['เหยื่อตกปลา', 'ฟืน', 'ปลาหมึก'],
+    specialFavorite: 'ปลาอินทรี',
+    dislikedItems: COMMON_DISLIKES,
     birthday: '13 ฤดูหนาว',
     location: 'ร้านอุปกรณ์ตกปลา'
   },
   {
-    id: 'lester',
-    name: 'เลสเตอร์',
-    category: "ป่ากัลลาบอน",
-    color: '#F8C4B4',
-    bio: 'พนักงานร้านเดลิซผู้ขยันขันแข็ง เขาชอบความเรียบง่ายของแซนด์วิชที่ทำให้เขามีแรงสู้กับกองจานชามในครัวต่อไป',
-    portrait: '🥪',
-    favoriteItems: ['แซนด์วิช', 'โอเด้ง'],
-    specialFavorite: 'แซนด์วิช',
-    dislikedItems: ['ขยะ'],
-    birthday: '10 ฤดูร้อน',
-    location: 'ร้านอาหารเดลิซ'
+    id: 'cooper',
+    name: 'คูเปอร์',
+    category: "ชาวเมืองเนทูระ",
+    color: '#FFF5E4',
+    bio: 'เด็กน้อยผู้รักการจับแมลง',
+    portrait: '🦗',
+    favoriteItems: ['มายองเนส', 'ด้วงกว่าง', 'นมสตรอเบอร์รี่'],
+    specialFavorite: 'ตั๊กแตนตำข้าว',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '18 ฤดูหนาว',
+    location: 'ทางเข้าเมือง'
   },
   {
-    id: 'blane',
-    name: 'เบลน',
-    category: "ป่ากัลลาบอน", // Fandom: Delish Restaurant
-    color: '#B9E0FF',
-    bio: 'บริกรผู้เงียบขรึมราวกับความสงบของท้องทะเล เขามีสมาธิที่แน่วแน่ในการจัดวางซาชิมิสดๆ ให้สวยงามที่สุด',
-    portrait: '🍣', // Fandom: Blane
-    favoriteItems: ['ซาชิมิ', 'ปลาไท'],
-    specialFavorite: 'ซาชิมิ',
-    dislikedItems: ['ขยะ'],
-    birthday: '1 ฤดูใบไม้ร่วง',
-    location: 'ร้านอาหารเดลิซ'
+    id: 'vera',
+    name: 'เทพธิดาเวร่า',
+    category: "ชาวเมืองเนทูระ",
+    color: '#97DECE',
+    bio: 'จิตวิญญาณแห่งพฤกษาผู้พิทักษ์รักษาต้นไม้ใหญ่',
+    portrait: '🧚',
+    favoriteItems: ['กะหล่ำปลี', 'โยเกิร์ต'],
+    specialFavorite: 'ผลไม้แช่อิ่ม',
+    dislikedItems: GIRL_DISLIKES,
+    birthday: '??',
+    location: 'ต้นไม้ใหญ่'
+  },
+
+  // --- สัตว์ป่า ---
+  {
+    id: 'bear',
+    name: 'หมี',
+    category: "สัตว์ป่า",
+    color: '#8D6E63',
+    bio: 'เจ้าป่าตัวใหญ่ ผูกมิตรด้วยปลาแซลมอน',
+    portrait: '🐻',
+    favoriteItems: ['หน่อไม้', 'วอลนัท'],
+    specialFavorite: 'ปลาแซลมอน',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'ภูเขา / ป่า'
   },
   {
-    id: 'yarra',
-    name: 'ยาร่า',
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Morning Ranch
-    color: '#FFD966',
-    bio: 'เจ้าของร้านวัวผู้ใจดี เธอรักสัตว์ทุกตัวเหมือนลูกและชอบทานคุกกี้ที่อบเสร็จใหม่ๆ เป็นที่สุด',
-    portrait: '🐄', // Fandom: Yarra
-    favoriteItems: ['คุกกี้', 'นม', 'พุดดิ้ง'],
-    specialFavorite: 'คุกกี้',
-    dislikedItems: ['ขยะ'],
-    birthday: '4 ฤดูใบไม้ผลิ',
-    location: 'ร้านวัวกู๊ดมอนิ่ง'
+    id: 'monkey',
+    name: 'ลิง',
+    category: "สัตว์ป่า",
+    color: '#D4A373',
+    bio: 'เจ้าจอมซนแห่งพงไพร ชอบกินแอปเปิลที่สุด',
+    portrait: '🐒',
+    favoriteItems: ['มันฝรั่ง'],
+    specialFavorite: 'แอปเปิล',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'ภูเขา / ป่าผู่จี'
   },
   {
-    id: 'chick',
-    name: 'ชิก', // Fandom: Chick (Yarra's son)
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Morning Ranch
-    color: '#FFF9B0',
-    bio: 'ลูกชายของยาร่าที่คอยช่วยดูแลฟาร์มสัตว์ เขาชอบของหวานและไข่ไก่สดๆ จากเล้า',
-    portrait: '🐣', // Fandom: Chick
-    favoriteItems: ['ไข่ต้ม', 'พุดดิ้ง', 'ชีสเค้ก'],
-    specialFavorite: 'พุดดิ้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '22 ฤดูใบไม้ผลิ',
-    location: 'ร้านวัวกู๊ดมอนิ่ง'
+    id: 'rabbit',
+    name: 'กระต่าย',
+    category: "สัตว์ป่า",
+    color: '#F0EAD6',
+    bio: 'สัตว์ตัวน้อยหูยาวสุดแสนจะขี้อาย',
+    portrait: '🐰',
+    favoriteItems: ['ข้าวโพด', 'กะหล่ำปลี', 'แอปเปิล'],
+    specialFavorite: 'แครอท',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'ลานกว้าง / ป่าผู่จี'
   },
   {
-    id: 'ketch',
-    name: 'เคตช์',
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Morning Ranch
-    color: '#829460',
-    bio: 'พนักงานหนุ่มร้านวัวผู้เงียบขรึมแต่ทำงานคล่องแคล่ว แซนด์วิชคืออาหารที่เขาชอบทานที่สุดยามพักเที่ยง',
-    portrait: '🤠', // Fandom: Ketch
-    favoriteItems: ['แซนด์วิช', 'ผักกาด', 'ชีส'],
-    specialFavorite: 'แซนด์วิช',
-    dislikedItems: ['ขยะ'],
-    birthday: '18 ฤดูร้อน',
-    location: 'ร้านวัวกู๊ดมอนิ่ง'
-  },
-  {
-    id: 'ravi',
-    name: 'แรบบี้',
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Sleep Animal Shop
-    color: '#A0D995',
-    bio: 'คุณยายเจ้าของร้านสัตว์ที่มีความรู้เรื่องสัตว์ป่าเป็นอย่างดี เธอชอบปลูกมะเขือเทศไว้ทานเองที่หลังบ้าน',
-    portrait: '👵🏻', // Fandom: Ravi
-    favoriteItems: ['มะเขือเทศ', 'ปุ๋ย', 'ซุปมิโซะ'],
-    specialFavorite: 'มะเขือเทศ',
-    dislikedItems: ['ขยะ'],
-    birthday: '12 ฤดูใบไม้ร่วง',
-    location: 'ร้านสัตว์กู๊ดสลีป'
-  },
-  {
-    id: 'rem',
-    name: 'เรม',
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Sleep Animal Shop
-    color: '#6BCBFF',
-    bio: 'หลานชายของแรบบี้ที่เป็นเพื่อนเล่นกับโนบิตะเสมอ เขาชอบแฮมเบอร์เกอร์ฝีมือคุณยายเป็นอันดับหนึ่ง',
-    portrait: '👦🏻', // Fandom: Rem
-    favoriteItems: ['แฮมเบอร์เกอร์', 'พุดดิ้ง', 'เบ็ดตกปลา'],
-    specialFavorite: 'แฮมเบอร์เกอร์',
-    dislikedItems: ['ขยะ'],
-    birthday: '26 ฤดูใบไม้ร่วง',
-    location: 'ร้านสัตว์กู๊ดสลีป'
-  },
-  {
-    id: 'erim',
-    name: 'เอริม',
-    category: "ซีเซ็นตะวันตก", // Fandom: Good Sleep Animal Shop
-    color: '#FFADAD',
-    bio: 'เด็กสาวผู้อ่อนโยนจากร้านสัตว์ เธอชอบพายแอปเปิ้ลและดอกไม้ป่าสีสันสดใส',
-    portrait: '👧🏻', // Fandom: Erim
-    favoriteItems: ['พายแอปเปิ้ล', 'ดอกไม้', 'วอลนัท'],
-    specialFavorite: 'พายแอปเปิ้ล',
-    dislikedItems: ['ขยะ'],
-    birthday: '15 ฤดูหนาว',
-    location: 'ร้านสัตว์กู๊ดสลีป'
-  },
-  {
-    id: 'triton',
-    name: 'ไทรทัน',
-    category: "ชายหาดซาซา", // Fandom: Fishing Shop
-    color: '#4D96FF',
-    bio: 'ลูกชายของเชลล่าผู้หลงรักท้องทะเล เขาฝันอยากจะเป็นนักตกปลาผู้ยิ่งใหญ่เหมือนแม่',
-    portrait: '🧒🏻', // Fandom: Triton
-    favoriteItems: ['ปลาซูซูกิ', 'คุกกี้'],
-    specialFavorite: 'พิซซ่า',
-    dislikedItems: ['ขยะ'],
-    birthday: '17 ฤดูร้อน',
-    location: 'ร้านอุปกรณ์ตกปลา'
-  }
-  ,
-  {
-    id: 'rouse',
-    name: 'โร้ส',
-    category: "เขตลึกลับ", // Fandom: Koropokkur
-    color: '#4D96FF',
-    bio: 'คอโรป็อกคุรุสีฟ้าผู้เงียบขรึม เขาชอบช่วยงานฟาร์มและโปรดปรานแป้งสาลีเป็นที่สุด',
-    portrait: '🧚‍♂️', // Fandom: Rose
-    favoriteItems: ['แป้ง', 'แร่ขยะ'],
-    specialFavorite: 'แป้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ถ้ำต้นไม้ใหญ่'
-  },
-  {
-    id: 'gid',
-    name: 'กิด',
-    category: "เขตลึกลับ", // Fandom: Koropokkur
-    color: '#A0D995',
-    bio: 'คอโรป็อกคุรุสีเขียวผู้ร่าเริง เขามักจะตื่นเต้นเมื่อเห็นแร่ที่ขุดได้จากเหมือง',
-    portrait: '🧚‍♂️', // Fandom: Gid
-    favoriteItems: ['แป้ง', 'แร่ขยะ'],
-    specialFavorite: 'แป้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ถ้ำต้นไม้ใหญ่'
-  },
-  {
-    id: 'luu',
-    name: 'ลู',
-    category: "เขตลึกลับ", // Fandom: Koropokkur
-    color: '#FFADAD',
-    bio: 'คอโรป็อกคุรุสีชมพูผู้อ่อนโยน เธอรักการทำอาหารและชอบขอแป้งจากโนบิตะอยู่เสมอ',
-    portrait: '🧚‍♀️', // Fandom: Luu
-    favoriteItems: ['แป้ง', 'แร่ขยะ'],
-    specialFavorite: 'แป้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ถ้ำต้นไม้ใหญ่'
-  },
-  {
-    id: 'bam',
-    name: 'แบม',
-    category: "เขตลึกลับ", // Fandom: Koropokkur
-    color: '#FFD93D',
-    bio: 'คอโรป็อกคุรุสีเหลืองผู้ขยันขันแข็ง เขาเชื่อว่าการทำงานหนักคือความสุขของชีวิต',
-    portrait: '🧚‍♂️', // Fandom: Bam
-    favoriteItems: ['แป้ง', 'แร่ขยะ'],
-    specialFavorite: 'แป้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ถ้ำต้นไม้ใหญ่'
-  },
-  {
-    id: 'kee',
-    name: 'คี',
-    category: "เขตลึกลับ", // Fandom: Koropokkur
-    color: '#FFAD60',
-    bio: 'คอโรป็อกคุรุสีส้มผู้ขี้เล่น เขาชอบเล่นซ่อนแอบในถ้ำต้นไม้ใหญ่กับเพื่อนๆ',
-    portrait: '🧚‍♂️', // Fandom: Kee
-    favoriteItems: ['แป้ง', 'แร่ขยะ'],
-    specialFavorite: 'แป้ง',
-    dislikedItems: ['ขยะ'],
-    birthday: '??', // Fandom: Unknown
-    location: 'ถ้ำต้นไม้ใหญ่'
+    id: 'squirrel',
+    name: 'กระรอก',
+    category: "สัตว์ป่า",
+    color: '#E67E22',
+    bio: 'กระรอกน้อยหางฟูที่ว่องไวมาก',
+    portrait: '🐿️',
+    favoriteItems: ['อัลมอนด์'],
+    specialFavorite: 'วอลนัท',
+    dislikedItems: COMMON_DISLIKES,
+    birthday: '??',
+    location: 'ป่าผู่จี / ภูเขาซูซู'
   }
 ];
 
-export const getCharacterByName = (name) => CHARACTERS.find(c => c.name === name);
+export const getCharacterByName = (name) => CHARACTERS.find(c => c.name.includes(name));
