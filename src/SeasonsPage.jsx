@@ -364,8 +364,11 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                                 const char = getCharacterByName(charName);
                                 return (
                                   <div key={charName} className="group/char relative">
-                                    <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5">
-                                      <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                                    <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5 flex items-center justify-center">
+                                      {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                        ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                        : <span className="text-[14px]">{char?.portrait || charName[0]}</span>
+                                      }
                                     </div>
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 bg-[#1A1A1A] text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/char:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-75 group-hover/char:scale-100 z-10">
                                       {charName}
@@ -474,8 +477,11 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                                 const char = getCharacterByName(charName);
                                 return (
                                   <div key={charName} className="group/char relative">
-                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5">
-                                      <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5 flex items-center justify-center">
+                                      {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                        ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                        : <span className="text-[12px]">{char?.portrait || charName[0]}</span>
+                                      }
                                     </div>
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 bg-[#1A1A1A] text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/char:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-75 group-hover/char:scale-100 z-10">{charName}</div>
                                   </div>
@@ -543,8 +549,11 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                                 const char = getCharacterByName(charName);
                                 return (
                                   <div key={charName} className="group/char relative">
-                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5">
-                                      <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5 flex items-center justify-center">
+                                      {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                        ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                        : <span className="text-[12px]">{char?.portrait || charName[0]}</span>
+                                      }
                                     </div>
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 bg-[#1A1A1A] text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/char:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-75 group-hover/char:scale-100 z-10">{charName}</div>
                                   </div>
@@ -611,8 +620,11 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                                 const char = getCharacterByName(charName);
                                 return (
                                   <div key={charName} className="group/char relative">
-                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5">
-                                      <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5 flex items-center justify-center">
+                                      {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                        ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                        : <span className="text-[12px]">{char?.portrait || charName[0]}</span>
+                                      }
                                     </div>
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 bg-[#1A1A1A] text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/char:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-75 group-hover/char:scale-100 z-10">{charName}</div>
                                   </div>
@@ -790,8 +802,11 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                                 const char = getCharacterByName(charName);
                                 return (
                                   <div key={charName} className="group/char relative">
-                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5">
-                                      <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                                    <div className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow-sm ring-1 ring-[#1A1A1A]/5 flex items-center justify-center">
+                                      {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                        ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                        : <span className="text-[12px]">{char?.portrait || charName[0]}</span>
+                                      }
                                     </div>
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 bg-[#1A1A1A] text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/char:opacity-100 whitespace-nowrap pointer-events-none transition-all scale-75 group-hover/char:scale-100 z-10">
                                       {charName}

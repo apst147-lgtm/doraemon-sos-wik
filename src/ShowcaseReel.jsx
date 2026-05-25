@@ -13,7 +13,7 @@ const SOUNDS = {
 const playSound = (url, volume = 0.1) => {
   const audio = new Audio(url);
   audio.volume = volume;
-  audio.play().catch(() => {}); // ป้องกัน Error กรณีเบราว์เซอร์บล็อกการเล่นเสียงอัตโนมัติ
+  audio.play().catch((e) => { console.error("Failed to play sound:", e); }); // ป้องกัน Error กรณีเบราว์เซอร์บล็อกการเล่นเสียงอัตโนมัติ
 };
 
 // --- Mock Data for Showcase ---
@@ -362,21 +362,7 @@ const ShowcaseReel = ({ onFinish }) => {
   const [currentScene, setCurrentScene] = useState(0);
   const [flash, setFlash] = useState(false);
 
-  // --- Sound Effects Logic ---
-  useEffect(() => {
-    // เล่นเสียงเปลี่ยนซีน (เริ่มตั้งแต่ซีนที่ 2 เป็นต้นไป)
-    if (currentScene > 0) {
-      playSound(SOUNDS.TRANSITION, 0.05); // ระดับเสียง 5% (เบามาก)
-    }
-
-    // เล่นเสียงคลิกเม้าส์ ถ้าซีนนั้นมีการสั่งให้ Click
-    if (scene?.cursor?.click) {
-      const clickTimer = setTimeout(() => {
-        playSound(SOUNDS.CLICK, 0.08); // ระดับเสียง 8%
-      }, 800); // เล่นหลังจากเม้าส์เริ่มขยับไปแล้วเพื่อให้ดูสมจริง
-      return () => clearTimeout(clickTimer);
-    }
-  }, [currentScene, scene?.cursor?.click]);
+  const scene = SCENES[currentScene];
 
   useEffect(() => {
     if (currentScene < SCENES.length - 1) {
@@ -397,7 +383,6 @@ const ShowcaseReel = ({ onFinish }) => {
     setTimeout(onFinish, 500);
   };
 
-  const scene = SCENES[currentScene];
   const prefersReducedMotion = useReducedMotion();
 
   // Multi-type Transitions
@@ -487,7 +472,12 @@ const ShowcaseReel = ({ onFinish }) => {
               return (
             <div className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
               <div className="flex items-center gap-6 mb-6">
-                <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl" style={{ backgroundColor: `${char.color}20` }}>{char.portrait}</div>
+                <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl overflow-hidden" style={{ backgroundColor: `${char.color}20` }}>
+                  {char.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http')) 
+                    ? <img src={char.portrait} alt={char.name} className="w-full h-full object-cover" />
+                    : char.portrait
+                  }
+                </div>
                 <div className="min-w-0">
                   <h3 className="text-2xl font-black text-[#5D4037] leading-none mb-2">{char.name}</h3>
                   <span className="text-xs font-bold text-[#F4A460] uppercase tracking-widest">🎂 {char.birthday}</span>

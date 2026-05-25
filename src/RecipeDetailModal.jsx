@@ -144,8 +144,11 @@ const RecipeDetailModal = ({ selectedRecipe, onClose }) => {
                         const char = getCharacterByName(charName); // Smaller avatar
                         return (
                           <div key={charName} className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-full border-2 border-[#8C7E6A]/20 overflow-hidden bg-white shadow-sm">
-                              <img src={char?.portrait || `https://ui-avatars.com/api/?name=${charName}`} alt={charName} className="w-full h-full object-cover" />
+                            <div className="w-12 h-12 rounded-full border-2 border-[#8C7E6A]/20 overflow-hidden bg-white shadow-sm flex items-center justify-center">
+                              {char?.portrait && (char.portrait.includes('/') || char.portrait.startsWith('http'))
+                                ? <img src={char.portrait} alt={charName} className="w-full h-full object-cover" />
+                                : <span className="text-2xl">{char?.portrait || charName[0]}</span>
+                              }
                             </div>
                             <span className="text-[10px] font-bold text-[#1A1A1A]/70">{charName}</span>
                           </div>
