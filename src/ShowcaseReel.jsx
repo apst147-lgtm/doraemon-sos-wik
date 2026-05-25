@@ -1,21 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from './utils'; // Assuming cn utility is available
-
-// --- Sound Effects Assets ---
-// ใช้เสียงโทน Soft/Minimal เพื่อไม่ให้รบกวนผู้ใช้งาน
-const SOUNDS = {
-  TRANSITION: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3', // เสียง Pop เบาๆ ตอนเปลี่ยนซีน
-  CLICK: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',        // เสียงคลิกเม้าส์แบบ Interface
-  TYPING: 'https://assets.mixkit.co/active_storage/sfx/448/448-preview.mp3'          // เสียงพิมพ์คีย์บอร์ด
-};
-
-const playSound = (url, volume = 0.1) => {
-  const audio = new Audio(url);
-  audio.volume = volume;
-  audio.play().catch((e) => { console.error("Failed to play sound:", e); }); // ป้องกัน Error กรณีเบราว์เซอร์บล็อกการเล่นเสียงอัตโนมัติ
-};
-
 // --- Mock Data for Showcase ---
 // (Ideally, this would be imported from central data files, but for a standalone showcase, mock data here is fine)
 const MOCK_CHARACTERS = {
@@ -127,7 +112,6 @@ const TypingEffect = ({ text, speed = 80 }) => {
     let i = 0;
     const timer = setInterval(() => {
       setDisplayedText(text.slice(0, i + 1));
-      playSound(SOUNDS.TYPING, 0.03); // เล่นเสียงพิมพ์เบาๆ (ระดับเสียง 3% เพื่อไม่ให้รำคาญ)
       i++;
       if (i >= text.length) clearInterval(timer);
     }, speed);
@@ -207,7 +191,7 @@ const SearchSimulation = ({ text, label = "Quick Search" }) => (
  * แทนที่ตัวหนังสือหมุนๆ ด้วย Floating Bokeh
  */
 const DynamicBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
     {[...Array(6)].map((_, i) => (
       <motion.div
         key={i}
@@ -217,7 +201,7 @@ const DynamicBackground = () => (
           height: `${Math.random() * 400 + 200}px`,
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
-          backgroundColor: ['#FFE4C4', '#F3DCC1', '#FDFCF0', '#E2F0D9'][i % 4], // Softer Cream/Pastel colors
+          backgroundColor: ['#F3DCC1', '#D9EAF7', '#E2F0D9', '#F3E5AB'][i % 4],
         }}
         animate={{
           x: [0, Math.random() * 100 - 50, 0],
@@ -232,38 +216,47 @@ const DynamicBackground = () => (
 
 /**
  * MouseCursor Component
- * จำลองลูกศรเม้าส์ที่มีป้ายกำกับบอกการกระทำ
+ * เปลี่ยนเป็น Cursor มือสุดน่ารัก พร้อมเอฟเฟกต์คลิกแบบใหม่
  */
 const MouseCursor = ({ target, label }) => (
   <motion.div
     animate={target}
-    initial={{ x: '50vw', y: '90vh', opacity: 0 }}
-    transition={{ type: "spring", stiffness: 40, damping: 25, mass: 1.2 }} // Smoother, heavier feel
+    initial={{ x: '50vw', y: '100vh', opacity: 0 }}
+    transition={{ type: "spring", stiffness: 35, damping: 20, mass: 1.5 }}
     className="fixed z-[11000] pointer-events-none flex items-start"
-    style={{ x: '-10px', y: '-10px' }} // Offset to point accurately
   >
-    <motion.svg 
-      animate={target.click ? { scale: [1, 0.8, 1] } : {}}
-      width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5.65376 12.3822L15.127 15.3458C16.327 15.7208 17.2791 14.7687 16.9041 13.5687L13.9405 4.09545C13.4863 2.64212 11.4396 2.58587 10.9063 4.01712L8.91043 9.3392L3.58835 11.335C2.15709 11.8683 2.20043 13.915 3.65376 14.3692L5.65376 12.3822Z" fill="#1A1A1A" stroke="white" strokeWidth="2"/>
+    <div className="relative">
+      {/* Cute Glove Pointer */}
+      <motion.div
+        animate={target.click ? { scale: 0.7, rotate: -10 } : { scale: 1, rotate: 0 }}
+        className="w-10 h-10 flex items-center justify-center"
+      >
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-lg">
+          <path d="M7 10.5V6.5C7 5.11929 8.11929 4 9.5 4C10.8807 4 12 5.11929 12 6.5V10.5M7 10.5C7 10.5 5 10.5 5 12.5V16.5C5 18.7091 6.79086 20.5 9 20.5H15C17.2091 20.5 19 18.7091 19 16.5V12.5C19 10.5 17 10.5 17 10.5M7 10.5H17M12 10.5V8.5C12 7.11929 13.1193 6 14.5 6C15.8807 6 17 7.11929 17 8.5V10.5" stroke="#5D4037" strokeWidth="2" strokeLinecap="round" fill="white"/>
+        </svg>
+      </motion.div>
+
+      {/* Click Sparkle Effect */}
       {target.click && (
-        <motion.circle 
+        <motion.div
           initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 4, opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          cx="12" cy="12" r="10" stroke="#F4A460" strokeWidth="3" fill="none"
-        />
+          animate={{ scale: 2, opacity: 0 }}
+          className="absolute -top-2 -left-2 flex items-center justify-center w-14 h-14"
+        >
+          <span className="text-2xl">✨</span>
+        </motion.div>
       )}
-    </motion.svg>
+    </div>
+
     <AnimatePresence>
       {label && (
         <motion.div
           initial={{ opacity: 0, x: -10, scale: 0.8 }}
-          animate={{ opacity: 1, x: 10, scale: 1 }}
+          animate={{ opacity: 1, x: 20, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="bg-[#1A1A1A] text-[#FFF9F0] text-[9px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2"
+          className="bg-white/95 backdrop-blur-md text-[#5D4037] text-[10px] font-black px-4 py-2 rounded-2xl shadow-2xl border-2 border-[#F3DCC1] flex items-center gap-2 whitespace-nowrap"
         >
-          <span className="w-1.5 h-1.5 bg-[#F4A460] rounded-full animate-ping" />
+          <span className="w-2 h-2 bg-[#F4A460] rounded-full animate-pulse" />
           {label}
         </motion.div>
       )}
@@ -280,7 +273,7 @@ const SCENES = [
   {
     type: 'simulate-search',
     text: 'shizuka',
-    cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
     cursorLabel: 'Searching for friends...',
     duration: 3000
   },
@@ -289,7 +282,7 @@ const SCENES = [
   { 
     type: 'preview-dual-character', 
     charIds: ['shizuka', 'doraemon'],
-    cursor: { x: '35vw', y: '45vh', opacity: 1, click: true },
+    cursor: { x: '40vw', y: '50vh', opacity: 1, click: true },
     cursorLabel: 'Click to see favorites',
     duration: 5000 
   },
@@ -307,7 +300,7 @@ const SCENES = [
   {
     type: 'preview-dual-shop',
     shopIds: ['blacksmith', 'general_store'],
-    cursor: { x: '65vw', y: '45vh', opacity: 1, click: true },
+    cursor: { x: '60vw', y: '45vh', opacity: 1, click: true },
     cursorLabel: 'Open schedule',
     duration: 5000
   },
@@ -317,7 +310,7 @@ const SCENES = [
     type: 'simulate-search',
     text: 'strawberry',
     label: 'Crop Profit Analysis',
-    cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
+    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
     cursorLabel: 'Calculating profit...',
     duration: 3000
   },
@@ -325,7 +318,7 @@ const SCENES = [
   { 
     type: 'preview-dual-crop', 
     cropIds: ['cabbage', 'strawberry'],
-    cursor: { x: '65vw', y: '55vh', opacity: 1, click: true },
+    cursor: { x: '60vw', y: '55vh', opacity: 1, click: true },
     cursorLabel: 'Comparing yields',
     duration: 5000,
     transition: 'slideUp'
@@ -334,19 +327,27 @@ const SCENES = [
   {
     type: 'preview-dual-calendar',
     events: [{ seasonId: 'spring', eventDay: 8 }, { seasonId: 'winter', eventDay: 25 }],
-    cursor: { x: '50vw', y: '60vh', opacity: 1, click: false },
+    cursor: { x: '55vw', y: '58vh', opacity: 1, click: false },
     cursorLabel: 'Mark the date!',
     duration: 5000,
     transition: 'zoomIn'
   },
 
-  // Quick Reveal: Recipes
+  // Action 5: Detailed Recipe Search with Price Breakdown
+  {
+    type: 'simulate-search',
+    text: 'dorayaki',
+    label: 'Secret Recipe Finder',
+    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
+    duration: 3000
+  },
+
   { 
-    type: 'preview-dual-modal', 
-    recipeIds: ['dorayaki', 'curry'], 
-    cursor: { x: '35vw', y: '50vh', opacity: 1, click: true },
-    cursorLabel: 'Reveal ingredients',
-    duration: 5000,
+    type: 'preview-recipe-detail', 
+    recipeId: 'dorayaki', 
+    cursor: { x: '50vw', y: '60vh', opacity: 1, click: true },
+    cursorLabel: 'Check potential profit',
+    duration: 7000,
     transition: 'sideSlide'
   },
 
@@ -379,7 +380,6 @@ const ShowcaseReel = ({ onFinish }) => {
   }, [currentScene, onFinish]);
 
   const handleClose = () => {
-    playSound(SOUNDS.CLICK, 0.1);
     setTimeout(onFinish, 500);
   };
 
@@ -854,6 +854,38 @@ const ShowcaseReel = ({ onFinish }) => {
                 </div>
               );
             })}
+          </motion.div>
+        )}
+
+        {scene.type === 'preview-recipe-detail' && (
+          <motion.div key={`recipe-detail-${scene.recipeId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10">
+            {(() => {
+              const recipe = MOCK_RECIPES[scene.recipeId];
+              if (!recipe) return null;
+              const profit = recipe.sell - recipe.cost;
+              return (
+                <div className="bg-[#FCFBF7] border-4 border-[#8C7E6A]/20 p-8 shadow-2xl rounded-[40px] w-[400px] text-center">
+                  <span className="text-7xl block mb-4">{recipe.icon}</span>
+                  <h3 className="text-3xl font-black text-[#1A1A1A] mb-1">{recipe.name}</h3>
+                  <p className="text-[10px] font-bold text-[#8C7E6A] uppercase mb-6 tracking-widest">{recipe.equipment}</p>
+                  <div className="space-y-3 bg-[#F3DCC1]/10 p-5 rounded-3xl border border-[#F3DCC1]/30">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-[#5D4037]/60">ราคาขาย</span>
+                      <span className="font-bold text-[#E97451]">{recipe.sell.toLocaleString()} G</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-[#5D4037]/60">ต้นทุนวัตถุดิบ</span>
+                      <span className="text-[#5D4037]/80">{recipe.cost.toLocaleString()} G</span>
+                    </div>
+                    <div className="h-[1px] bg-[#1A1A1A]/10 my-2"></div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black uppercase text-[#82A07D]">กำไรสุทธิ</span>
+                      <span className="text-2xl font-black text-[#82A07D]">+{profit.toLocaleString()} G</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </motion.div>
         )}
 
