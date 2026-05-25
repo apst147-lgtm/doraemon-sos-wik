@@ -7,12 +7,15 @@ import ShowcaseReel from './ShowcaseReel';
 const RecipesPage = React.lazy(() => import('./RecipesPage'));
 const SeasonsPage = React.lazy(() => import('./SeasonsPage'));
 const CharactersPage = React.lazy(() => import('./CharactersPage'));
+const ShopsPage = React.lazy(() => import('./ShopsPage'));
+const MiningPage = React.lazy(() => import('./MiningPage'));
 
 // --- ข้อมูลหมวดหมู่หน้าหลัก ---
 const CATEGORIES = [
   { id: 'recipes', title: 'รวมเมนูอาหาร', icon: '🍲', description: 'สูตรลับจากครัวโนบิตะ', color: '#F3E5AB' },
   { id: 'seasons', title: 'ฤดูกาล', icon: '🌸', description: 'ตารางเพาะปลูกรายเดือน', color: '#E2F0D9' },
   { id: 'characters', title: 'ตัวละคร', icon: '👧🏻', description: 'ความสัมพันธ์และของที่ชอบ', color: '#D9EAF7' },
+  { id: 'mining', title: 'เหมืองแร่', icon: '⛏️', description: 'ข้อมูลแร่และชั้นเหมือง', color: '#E5E7EB' },
   { id: 'shops', title: 'ร้านค้า', icon: '🧺', description: 'เวลาทำการและรายการสินค้า', color: '#F7E2D9' },
 ];
 
@@ -28,7 +31,7 @@ const NavBar = memo(({ activeTab, onTabChange, onToggleShowcase }) => (
       >
         Doraemon <span className="font-light text-[#F4A460]">SoS</span>
       </motion.div>
-      <div className="hidden gap-12 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#5F5D59]/60 md:flex">
+      <div className="hidden gap-6 lg:gap-12 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#5F5D59]/60 md:flex">
         {CATEGORIES.map(cat => (
           <button 
             key={cat.id}
@@ -79,7 +82,7 @@ const HomeView = ({ onTabChange, onToggleShowcase }) => (
       </motion.button>
     </header>
 
-    <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {CATEGORIES.map((cat, index) => (
         <motion.div
           key={cat.id}
@@ -237,6 +240,16 @@ const App = () => {
           ) : activeTab === 'characters' ? (
             <CharactersPage
               key="characters"
+              onBack={() => setActiveTab('home')}
+            />
+          ) : activeTab === 'mining' ? (
+            <MiningPage
+              key="mining"
+              onBack={() => setActiveTab('home')}
+            />
+          ) : activeTab === 'shops' ? (
+            <ShopsPage
+              key="shops"
               onBack={() => setActiveTab('home')}
             />
           ) : (

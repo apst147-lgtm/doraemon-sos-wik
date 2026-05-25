@@ -1,561 +1,1032 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { cn } from './utils'; // Assuming cn utility is available
-// --- Mock Data for Showcase ---
-// (Ideally, this would be imported from central data files, but for a standalone showcase, mock data here is fine)
-const MOCK_CHARACTERS = {
-  shizuka: {
-    id: 'shizuka', name: 'ชิซุกะ', portrait: '👧🏻', color: '#FF8AAE',
-    bio: 'สาวน้อยผู้ใจดีและรักสะอาด ทำงานอยู่ที่โรงพยาบาล',
-    birthday: '8 ฤดูใบไม้ผลิ', specialFavorite: 'มันเผา',
-    favoriteItems: ['ชีสเค้ก', 'มันเทศ', 'ดอกเพนนีเดซี่'],
-    dislikedItems: ['แมลงทุกชนิด', 'กบ', 'ขยะ'] // Specific for showcase, not using global GIRL_DISLIKES_SHOWCASE
-  },
-  doraemon: {
-    id: 'doraemon', name: 'โดราเอมอน', portrait: '🐱', color: '#6BCBFF',
-    bio: 'หุ่นยนต์แมวจากอนาคต ผู้หลงรักการกินแป้งทอดโดรายากิเป็นที่สุด',
-    birthday: '28 ฤดูใบไม้ผลิ', specialFavorite: 'โดรายากิ',
-    favoriteItems: ['ดอกทานตะวัน', 'แตงโม'],
-    dislikedItems: ['ขยะตกปลา', 'วัชพืช']
-  }, // No Nobi, Gian, Suneo for simplicity in showcase
-};
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CHARS, CROPS, FERTS, RECIPES, SHOPS, MINING } from './data/showcaseData';
 
-const MOCK_CROPS = {
-  cabbage: {
-    id: 'cabbage', name: 'กะหล่ำปลี', icon: '🥬', season: 'Spring', growDays: 7, reHarvest: false, sellPrice: 3500, buyPrice: 500,
-    profitPerDay: 500, likedBy: ['เทพธิดาเวร่า'] // Corrected profitPerDay
-  },
-  strawberry: {
-    id: 'strawberry', name: 'สตรอว์เบอร์รี', icon: '🍓', season: 'Spring', growDays: 8, reHarvest: true, harvestInterval: 3, sellPrice: 200, buyPrice: 100,
-    profitPerDay: 150, likedBy: ['เฮเลน', 'รัม']
-  }
-};
+const SPEEDS = [
+  { x: 1, label: '1× SPEED' },
+  { x: 1.5, label: '1.5× FAST' },
+  { x: 2, label: '2× FASTER' },
+  { x: 3, label: '3× RAPID' },
+];
 
-const MOCK_SHOPS = {
-  blacksmith: {
-    id: 'blacksmith', name: 'ร้านตีเหล็ก', icon: '⚒️', hours: '9:00 - 17:00', closed: 'พฤหัสบดี',
-    items: ['แร่เหล็ก', 'แร่ทองแดง', 'แร่เงิน', 'แร่ทอง']
-  },
-  general_store: {
-    id: 'general_store', name: 'ร้านขายของชำ', icon: '🧺', hours: '8:00 - 18:00', closed: 'อาทิตย์',
-    items: ['เมล็ดพืช', 'ปุ๋ย', 'น้ำตาล', 'เกลือ']
-  }
-};
-
-const MOCK_RECIPES = {
-  dorayaki: {
-    id: 'dorayaki', name: 'โดรายากิ', icon: '🍘', equipment: 'เตาอบ', // Corrected equipment
-    ingredients: [{ name: 'แป้งสาลี', icon: '🌾', source: 'ร้านขายของชำ' }, { name: 'ถั่วแดง', icon: '🫘', source: 'ร้านขายของชำ' }],
-    sell: 500, cost: 150, likedBy: ['โดราเอมอน'], tips: 'ของโปรดโดราเอมอน! ทำเยอะๆ ได้เลย'
-  },
-  curry: {
-    id: 'curry', name: 'แกงกะหรี่', icon: '🍛', equipment: 'หม้อ', // Corrected equipment
-    ingredients: [{ name: 'ข้าว', icon: '🍚', source: 'ร้านขายของชำ' }, { name: 'มันฝรั่ง', icon: '🥔', source: 'ปลูก' }, { name: 'แครอท', icon: '🥕', source: 'ปลูก' }],
-    sell: 800, cost: 250, likedBy: ['ไจแอนท์'], tips: 'เมนูโปรดของไจแอนท์! เพิ่มความสัมพันธ์ได้ดี'
-  },
-  corn_soup: {
-    id: 'corn_soup', name: 'ซุปข้าวโพด', icon: '🥣', equipment: 'เครื่องปั่น',
-    ingredients: [{ name: 'ข้าวโพด', icon: '🌽', source: 'ปลูก' }, { name: 'นม', icon: '🥛', source: 'ฟาร์มสัตว์' }],
-    sell: 400, cost: 120, likedBy: ['โดราเอมอน'], tips: 'ทำง่ายและเป็นของชอบของโดราเอมอน'
-  },
-  fruit_smoothie: {
-    id: 'fruit_smoothie', name: 'สมูทตี้ผลไม้', icon: '🥤', equipment: 'เครื่องปั่น',
-    ingredients: [{ name: 'สตรอว์เบอร์รี', icon: '🍓', source: 'ปลูก' }, { name: 'แอปเปิล', icon: '🍎', source: 'เก็บของป่า' }],
-    sell: 300, cost: 100, likedBy: ['ชิซุกะ'], tips: 'เครื่องดื่มสดชื่น เหมาะกับฤดูร้อน'
-  }
-};
-
-const MOCK_ITEMS = {
-  sweet_potato: {
-    name: 'มันเทศ', icon: '🍠', source: 'Foraging', season: 'ฤดูใบไม้ร่วง', location: 'ป่าผู่จี', sellPrice: 120, buyPrice: 0,
-    note: 'หาได้ตามพื้นดินในฤดูใบไม้ร่วง'
-  },
-  marlin: {
-    name: 'ปลาอินทรี', icon: '🐟', source: 'Fishing', season: 'ฤดูร้อน', location: 'ชายหาดซาซา', sellPrice: 1500, buyPrice: 0,
-    note: 'ปลาหายากในฤดูร้อน ตกได้ที่ชายหาด', likedBy: ['ซีฟี่']
-  }
-};
-
-const MOCK_EVENTS = {
-  spring: {
-    id: 'spring', name: 'ฤดูใบไม้ผลิ', icon: '🌸',
-    events: [
-      { day: 1, name: 'เทศกาลปีใหม่', type: 'festival' },
-      { day: 8, name: 'วันเกิดชิซุกะ', type: 'birthday', target: 'ชิซุกะ' },
-      { day: 15, name: 'เทศกาลดอกไม้', type: 'festival' }
-    ]
-  },
-  winter: {
-    id: 'winter', name: 'ฤดูหนาว', icon: '❄️',
-    events: [
-      { day: 1, name: 'เทศกาลหิมะ', type: 'festival' },
-      { day: 10, name: 'วันเกิดสมีตตี้', type: 'birthday', target: 'สมีตตี้' },
-      { day: 25, name: 'เทศกาลคริสต์มาส', type: 'festival' }
-    ]
-  }
-};
-
-const SOURCE_ICONS = {
-  Foraging: '🌳', Fishing: '🎣', Mining: '⛏️', Planting: '🌱', 'ร้านขายของชำ': '🧺', 'ฟาร์มสัตว์': '🐄', 'ไม่ระบุ': '❓'
-};
-const STAR_RATINGS = [{ label: '0.5 ดาว', multiplier: 1 }, { label: '1 ดาว', multiplier: 1.2 }, { label: '1.5 ดาว', multiplier: 1.4 }, { label: '2 ดาว', multiplier: 1.6 }, { label: '2.5 ดาว', multiplier: 1.8 }, { label: '3 ดาว', multiplier: 2 }];
-
-/**
- * TypingEffect Component
- * จำลองการพิมพ์ข้อความทีละตัวอักษร
- */
-const TypingEffect = ({ text, speed = 80 }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  
+// ─── CountUp ─────────────────────────────────────────────────────────────────
+const CountUp = ({ to, duration = 900 }) => {
+  const [val, setVal] = useState(0);
   useEffect(() => {
-    setDisplayedText(''); // Reset text when it changes
-    let i = 0;
-    const timer = setInterval(() => {
-      setDisplayedText(text.slice(0, i + 1));
-      i++;
-      if (i >= text.length) clearInterval(timer);
-    }, speed);
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
-  return <span className="border-r-4 border-[#F4A460] pr-1 animate-pulse">{displayedText}</span>;
+    let raf;
+    let start = null;
+    const tick = (ts) => {
+      if (!start) start = ts;
+      const t = Math.min(1, (ts - start) / duration);
+      const e = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(to * e));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to, duration]);
+  return <>{val.toLocaleString()}</>;
 };
 
-/**
- * TextReveal Component
- * อนิเมชันข้อความแบบ Apple-style (Blur-in & Stagger)
- */
-const TextReveal = ({ text, className = "" }) => {
-  const words = text.split(" ");
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
-    }),
-  };
+// ─── Scene: Intro ────────────────────────────────────────────────────────────
+const SceneIntro = () => (
+  <div className="flex flex-col items-center text-center select-none">
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.7, ease: [0.34, 1.2, 0.64, 1] }}
+      className="w-28 h-28 rounded-[32px] bg-[#5D4037] flex items-center justify-center text-6xl mb-8 shadow-2xl"
+      style={{ boxShadow: '0 30px 80px -16px rgba(93,64,55,0.4)' }}
+    >
+      📖
+    </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3, duration: 0.6 }}
+      className="text-[11px] font-black uppercase tracking-[0.6em] text-[#82A07D] mb-4"
+    >
+      Wiki Database
+    </motion.div>
+    <motion.h1
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5, duration: 0.7 }}
+      className="text-7xl md:text-9xl font-black leading-none uppercase tracking-[-0.03em] text-[#5D4037]"
+    >
+      Encyclopedia
+    </motion.h1>
+    <motion.p
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.4 }}
+      transition={{ delay: 1, duration: 0.8 }}
+      className="mt-6 text-sm font-bold uppercase tracking-[0.35em] text-[#5D4037]"
+    >
+      Nobita's Story of Seasons
+    </motion.p>
+  </div>
+);
 
-  const child = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { type: "spring", damping: 12, stiffness: 100 },
-    },
-    hidden: {
-      opacity: 0,
-      y: 20,
-      filter: "blur(10px)",
-    },
-  };
-
+// ─── Scene: Characters ───────────────────────────────────────────────────────
+const SceneChars = ({ filter, highlighted }) => {
+  const filtered = filter === 'ทั้งหมด' ? CHARS : CHARS.filter(c => c.cat === filter);
+  const CATS = ['ทั้งหมด', 'หลัก', 'ร้านค้า'];
   return (
-    <motion.div className={`flex flex-wrap justify-center gap-x-[0.3em] ${className}`} variants={container} initial="hidden" animate="visible">
-      {words.map((word, index) => (
-        <motion.span key={index} variants={child}>{word}</motion.span>
-      ))}
+    <div className="w-full max-w-3xl flex flex-col gap-6">
+      <div className="flex items-end justify-between">
+        <h2 className="text-4xl font-black uppercase tracking-tight text-[#5D4037]">Characters</h2>
+        <div className="flex gap-2">
+          {CATS.map(cat => (
+            <div
+              key={cat}
+              data-showcase-id={`filter-${cat}`}
+              className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-300"
+              style={filter === cat
+                ? { background: '#5D4037', color: '#FFF9F0', borderColor: '#5D4037' }
+                : { background: 'white', color: 'rgba(93,64,55,0.4)', borderColor: '#F3DCC1' }
+              }
+            >
+              {cat}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((ch) => (
+            <motion.div
+              layout
+              key={ch.id}
+              data-showcase-id={`char-${ch.id}`}
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{ opacity: 1, scale: highlighted === ch.id ? 1.04 : 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+              className="bg-white rounded-[28px] p-6 border-2 transition-all duration-300 cursor-pointer"
+              style={{
+                borderColor: highlighted === ch.id ? ch.color : '#F3DCC1',
+                boxShadow: highlighted === ch.id
+                  ? `0 12px 40px -8px ${ch.color}55`
+                  : '0 2px 8px rgba(93,64,55,0.06)',
+              }}
+            >
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4"
+                style={{ background: `${ch.color}22` }}
+              >
+                {ch.p}
+              </div>
+              <div className="font-black text-[#5D4037] text-base leading-tight">{ch.name}</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: ch.color }}>
+                {ch.cat}
+              </div>
+              <div className="mt-3 text-[11px] text-[#5D4037]/60 font-medium">🎂 {ch.bday}</div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+// ─── Scene: Character Detail ──────────────────────────────────────────────────
+const SceneCharDetail = ({ charId }) => {
+  const ch = CHARS.find(c => c.id === charId);
+  if (!ch) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92, y: 30 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+      className="bg-white rounded-[36px] p-10 border-2 w-full max-w-md shadow-2xl"
+      style={{
+        borderColor: ch.color,
+        boxShadow: `0 30px 80px -16px ${ch.color}44`,
+      }}
+    >
+      <div className="flex items-center gap-6 mb-8">
+        <div
+          className="w-24 h-24 rounded-3xl flex items-center justify-center text-5xl shadow-lg"
+          style={{ background: `${ch.color}22` }}
+        >
+          {ch.p}
+        </div>
+        <div>
+          <div
+            className="text-[10px] font-black uppercase tracking-[0.3em] mb-1"
+            style={{ color: ch.color }}
+          >
+            {ch.cat}
+          </div>
+          <h3 className="text-3xl font-black text-[#5D4037] leading-none">{ch.name}</h3>
+          <div className="mt-2 text-sm text-[#5D4037]/60 font-medium">🎂 {ch.bday}</div>
+        </div>
+      </div>
+      <div
+        className="rounded-2xl p-4 mb-4"
+        style={{ background: `${ch.color}11`, border: `1px solid ${ch.color}33` }}
+      >
+        <div className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 mb-2">
+          ⭐ ของที่ชอบที่สุด
+        </div>
+        <div className="text-lg font-black text-[#5D4037]">{ch.fav}</div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-[#F0FDF4] rounded-2xl p-4 border border-[#86EFAC]/30">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#82A07D]/60 mb-2">ของชอบ</div>
+          {ch.favs.map(f => (
+            <div key={f} className="text-xs text-[#5D4037] font-medium mb-1">{f}</div>
+          ))}
+        </div>
+        <div className="bg-[#FFF1F2] rounded-2xl p-4 border border-[#FECDD3]/30">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#FF8AAE]/60 mb-2">ของเกลียด</div>
+          {ch.dis.map(d => (
+            <div key={d} className="text-xs text-[#5D4037] font-medium mb-1">{d}</div>
+          ))}
+        </div>
+      </div>
     </motion.div>
   );
 };
 
-/**
- * SearchSimulation Component
- * จำลองช่องค้นหาที่ดูสมจริงและน่ารักขึ้น
- */
-const SearchSimulation = ({ text, label = "Quick Search" }) => (
-  <div className="flex flex-col items-center gap-4">
-    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8C7E6A] opacity-50">{label}</span>
-    <div className="bg-white/90 backdrop-blur-xl border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-xl relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-1 bg-[#F4A460]/10" />
-      <motion.span 
-        animate={{ scale: [1, 1.2, 1] }} 
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="text-2xl opacity-30"
-      >
-        🔍
-      </motion.span>
-      <div className="text-3xl font-light tracking-tight text-[#1A1A1A] flex-1">
-        <TypingEffect text={text} speed={60} />
+// ─── Scene: Seasons / Crop Planner ───────────────────────────────────────────
+const SceneSeasons = ({ fertId, highlightRow }) => {
+  const fert = FERTS.find(f => f.id === fertId);
+  const boost = fert?.boost || 0;
+  const SEASONS = ['Spring 🌸', 'Summer ☀️', 'Fall 🍂', 'Winter ❄️'];
+  const [season, setSeason] = useState('Spring 🌸');
+
+  return (
+    <div className="w-full max-w-2xl flex flex-col gap-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-4xl font-black uppercase tracking-tight text-[#5D4037]">Seasons</h2>
+        <div className="flex gap-2">
+          {SEASONS.map(s => (
+            <button
+              key={s}
+              onClick={() => setSeason(s)}
+              className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all"
+              style={season === s
+                ? { background: '#5D4037', color: '#FFF9F0', borderColor: '#5D4037' }
+                : { background: 'white', color: 'rgba(93,64,55,0.35)', borderColor: '#F3DCC1' }
+              }
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
-      <motion.div 
-        animate={{ opacity: [1, 0] }}
-        transition={{ repeat: Infinity, duration: 0.8 }}
-        className="w-[2px] h-8 bg-[#F4A460]" 
-      />
+
+      {/* Fertilizer picker */}
+      <div className="bg-white rounded-2xl border border-[#F3DCC1] p-4 flex items-center gap-3">
+        <span className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 mr-2">ปุ๋ย:</span>
+        {FERTS.map(f => (
+          <div
+            key={f.id}
+            data-showcase-id={`fert-${f.id}`}
+            className="px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all duration-300 cursor-pointer"
+            style={fertId === f.id
+              ? { background: '#F4A460', color: 'white', borderColor: '#F4A460' }
+              : { background: '#FAF9F6', color: 'rgba(93,64,55,0.5)', borderColor: '#F3DCC1' }
+            }
+          >
+            {f.icon} {f.label}
+          </div>
+        ))}
+      </div>
+
+      {/* Crop table */}
+      <div className="bg-white rounded-2xl border border-[#F3DCC1] overflow-hidden">
+        <div className="grid grid-cols-5 bg-[#FAF9F6] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40">
+          <div className="col-span-2">พืช</div>
+          <div className="text-center">วันโต</div>
+          <div className="text-center">ราคาขาย</div>
+          <div className="text-center text-[#82A07D]">กำไร/วัน</div>
+        </div>
+        {CROPS.map((crop, i) => {
+          const adjDays = boost > 0 ? Math.max(1, Math.ceil(crop.days * (1 - boost / 100))) : crop.days;
+          const profitPerDay = Math.round((crop.profit / adjDays) * 10) / 10;
+          return (
+            <motion.div
+              key={crop.name}
+              animate={highlightRow === i
+                ? { backgroundColor: '#F0FDF4', x: 4 }
+                : { backgroundColor: '#FFFFFF', x: 0 }
+              }
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-5 px-5 py-4 border-t border-[#F3DCC1]/60 items-center"
+            >
+              <div className="col-span-2 flex items-center gap-3">
+                <span className="text-2xl">{crop.icon}</span>
+                <div>
+                  <div className="text-sm font-black text-[#5D4037]">{crop.name}</div>
+                  {crop.re && (
+                    <div className="text-[9px] font-bold text-[#82A07D] uppercase tracking-widest">re-harvest</div>
+                  )}
+                </div>
+              </div>
+              <div className="text-center font-mono text-sm font-bold text-[#5D4037]">
+                {adjDays}
+                {boost > 0 && (
+                  <span className="text-[#F4A460] text-[10px] ml-1">↓</span>
+                )}
+              </div>
+              <div className="text-center font-mono text-sm text-[#5D4037]/70">{crop.sell}G</div>
+              <div className="text-center font-mono text-sm font-black text-[#82A07D]">
+                {profitPerDay}G
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// ─── Scene: Recipes ───────────────────────────────────────────────────────────
+const SceneRecipes = ({ highlighted }) => (
+  <div className="w-full max-w-2xl flex flex-col gap-5">
+    <div className="flex items-end justify-between">
+      <h2 className="text-4xl font-black uppercase tracking-tight text-[#5D4037]">Recipes</h2>
+      <span className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/30">{RECIPES.length} เมนู</span>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      {RECIPES.map(r => (
+        <motion.div
+          key={r.id}
+          data-showcase-id={`recipe-${r.id}`}
+          animate={highlighted === r.id
+            ? { scale: 1.04, borderColor: '#F4A460', boxShadow: '0 12px 40px -8px rgba(244,164,96,0.4)' }
+            : { scale: 1, borderColor: '#F3DCC1', boxShadow: '0 2px 8px rgba(93,64,55,0.06)' }
+          }
+          transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+          className="bg-white rounded-[28px] p-6 border-2 cursor-pointer"
+        >
+          <div className="text-4xl mb-3">{r.icon}</div>
+          <div className="font-black text-[#5D4037] text-lg leading-tight mb-1">{r.name}</div>
+          <div className="text-[10px] font-bold text-[#5D4037]/40 uppercase tracking-wider mb-4">{r.equip}</div>
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] text-[#5D4037]/50">{r.cost}G</div>
+            <div className="font-black text-[#82A07D] text-sm">+{(r.sell - r.cost).toLocaleString()}G</div>
+          </div>
+          {r.likedBy.length > 0 && (
+            <div className="mt-3 text-[10px] font-bold text-[#F4A460] uppercase tracking-widest">
+              ❤️ {r.likedBy.join(', ')}
+            </div>
+          )}
+        </motion.div>
+      ))}
     </div>
   </div>
 );
 
-/**
- * DynamicBackground Component
- * แทนที่ตัวหนังสือหมุนๆ ด้วย Floating Bokeh
- */
-const DynamicBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
-    {[...Array(6)].map((_, i) => (
+// ─── Scene: Recipe Detail ─────────────────────────────────────────────────────
+const SceneRecipeDetail = ({ recipeId }) => {
+  const r = RECIPES.find(x => x.id === recipeId);
+  if (!r) return null;
+  const profit = r.sell - r.cost;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9, y: 40 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+      className="bg-white rounded-[36px] p-10 border-2 border-[#F3DCC1] w-full max-w-sm shadow-2xl text-center"
+    >
       <motion.div
-        key={i}
-        className="absolute rounded-full blur-[120px]"
-        style={{
-          width: `${Math.random() * 400 + 200}px`,
-          height: `${Math.random() * 400 + 200}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          backgroundColor: ['#F3DCC1', '#D9EAF7', '#E2F0D9', '#F3E5AB'][i % 4],
-        }}
-        animate={{
-          x: [0, Math.random() * 100 - 50, 0],
-          y: [0, Math.random() * 100 - 50, 0],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{ duration: Math.random() * 10 + 10, repeat: Infinity, ease: "linear" }}
-      />
-    ))}
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        className="text-7xl mb-4"
+      >
+        {r.icon}
+      </motion.div>
+      <h3 className="text-3xl font-black text-[#5D4037] mb-1">{r.name}</h3>
+      <div className="text-[10px] font-bold uppercase tracking-widest text-[#5D4037]/40 mb-6">{r.equip}</div>
+
+      {/* Ingredients */}
+      <div className="flex justify-center gap-3 mb-6">
+        {r.ings.map(ing => (
+          <div key={ing.n} className="flex flex-col items-center gap-1">
+            <div className="w-12 h-12 bg-[#FAF9F6] border border-[#F3DCC1] rounded-2xl flex items-center justify-center text-2xl">
+              {ing.i}
+            </div>
+            <div className="text-[9px] font-bold text-[#5D4037]/50 uppercase tracking-wide">{ing.n}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Profit breakdown */}
+      <div className="bg-[#FAF9F6] rounded-2xl p-5 border border-[#F3DCC1]/50 text-left">
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-[#5D4037]/50">ราคาขาย</span>
+          <span className="font-black text-[#F4A460]"><CountUp to={r.sell} /> G</span>
+        </div>
+        <div className="flex justify-between text-sm mb-3">
+          <span className="text-[#5D4037]/50">ต้นทุน</span>
+          <span className="font-bold text-[#5D4037]/70"><CountUp to={r.cost} /> G</span>
+        </div>
+        <div className="h-px bg-[#F3DCC1] mb-3" />
+        <div className="flex justify-between items-center">
+          <span className="text-[10px] font-black uppercase tracking-widest text-[#82A07D]">กำไรสุทธิ</span>
+          <span className="text-2xl font-black text-[#82A07D]">+<CountUp to={profit} /> G</span>
+        </div>
+      </div>
+
+      {r.likedBy.length > 0 && (
+        <div className="mt-4 text-sm font-bold text-[#F4A460]">❤️ ของโปรด: {r.likedBy.join(', ')}</div>
+      )}
+    </motion.div>
+  );
+};
+
+// ─── Scene: Shops ─────────────────────────────────────────────────────────────
+const SceneShops = () => (
+  <div className="w-full max-w-2xl flex flex-col gap-5">
+    <h2 className="text-4xl font-black uppercase tracking-tight text-[#5D4037]">Shops</h2>
+    <div className="grid grid-cols-2 gap-4">
+      {SHOPS.map((shop, i) => (
+        <motion.div
+          key={shop.name}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.1, type: 'spring', stiffness: 280, damping: 22 }}
+          className="bg-white rounded-[28px] p-7 border-2 border-[#F3DCC1] shadow-sm"
+        >
+          <motion.div
+            animate={{ rotate: [0, 8, -8, 0] }}
+            transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+            className="text-5xl mb-4"
+          >
+            {shop.icon}
+          </motion.div>
+          <div className="font-black text-[#5D4037] text-lg mb-4">{shop.name}</div>
+          <div
+            className="rounded-xl px-4 py-3 border"
+            style={{ background: `${shop.color}11`, borderColor: `${shop.color}33` }}
+          >
+            <div className="text-sm font-black" style={{ color: shop.color }}>⏰ {shop.hours}</div>
+            <div className="text-[10px] text-[#5D4037]/40 mt-1 font-medium">ปิดทุกวัน{shop.closed}</div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
   </div>
 );
 
-const SCENES = [
-  // --- 3 ซีนแรกสไตล์ Cinematic Reveal ---
-  { type: 'hero-reveal', content: 'THE ULTIMATE', sub: 'WIKI DATABASE', duration: 1200, transition: 'zoomIn' },
-  { type: 'hero-reveal', content: 'CRAFTED FOR', sub: 'NOBITA STORY OF SEASONS', highlight: true, duration: 1500, transition: 'slideUp' },
-  
-  // --- Simulated Actions ---
-  {
-    type: 'simulate-search',
-    text: 'shizuka',
-    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
-    cursorLabel: 'Searching for friends...',
-    duration: 3000
-  },
+// ─── Scene: Mining ────────────────────────────────────────────────────────────
+const SceneMining = () => (
+  <div className="w-full max-w-xl flex flex-col gap-5">
+    <h2 className="text-4xl font-black uppercase tracking-tight text-[#5D4037]">Mining</h2>
+    <div className="flex flex-col gap-3">
+      {MINING.map((layer, i) => (
+        <motion.div
+          key={layer.tier}
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.12, type: 'spring', stiffness: 280, damping: 22 }}
+          className="rounded-2xl p-5 border-2 flex items-center gap-5"
+          style={{ background: layer.bg, borderColor: `${layer.color}33` }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
+            style={{ background: `${layer.color}22` }}
+          >
+            {layer.icon}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-1">
+              <span
+                className="font-mono text-xs font-black px-2 py-0.5 rounded-md"
+                style={{ background: layer.color, color: 'white' }}
+              >
+                {layer.tier}
+              </span>
+              <span className="text-sm font-black text-[#5D4037]">{layer.label}</span>
+            </div>
+            <div className="text-[11px] text-[#5D4037]/50 font-medium">
+              {layer.items.join(' · ')}
+            </div>
+          </div>
+          <div className="text-2xl">{i === 3 ? '💰' : '⛏️'}</div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
 
-  // Dual Character Preview (Shizuka & Doraemon)
-  { 
-    type: 'preview-dual-character', 
-    charIds: ['shizuka', 'doraemon'],
-    cursor: { x: '40vw', y: '50vh', opacity: 1, click: true },
-    cursorLabel: 'Click to see favorites',
-    duration: 5000 
-  },
-  
-  // Action 2: Check Shops
-  {
-    type: 'simulate-search',
-    text: 'ร้านตีเหล็ก',
-    label: 'Checking Shop Hours',
-    cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
-    cursorLabel: 'Find shops...',
-    duration: 3000
-  },
+// ─── Scene: Outro ─────────────────────────────────────────────────────────────
+const SceneOutro = ({ onClose }) => (
+  <div className="flex flex-col items-center text-center">
+    <motion.div
+      initial={{ scale: 0, rotate: -30 }}
+      animate={{ scale: 1, rotate: 0 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.2 }}
+      className="w-32 h-32 rounded-full bg-gradient-to-br from-[#82A07D] to-[#F4A460] flex items-center justify-center text-6xl mb-8 shadow-2xl"
+    >
+      ✅
+    </motion.div>
+    <motion.h2
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5, duration: 0.6 }}
+      className="text-6xl md:text-8xl font-black leading-none tracking-[-0.03em] text-[#5D4037] mb-2"
+    >
+      That's a <span style={{
+        background: 'linear-gradient(135deg, #F4A460, #82A07D)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        fontStyle: 'italic',
+      }}>wrap.</span>
+    </motion.h2>
+    <motion.p
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.4 }}
+      transition={{ delay: 0.9 }}
+      className="mt-4 text-sm font-bold uppercase tracking-[0.4em] text-[#5D4037]"
+    >
+      10 ฟีเจอร์ · 6 ตัวละคร · พร้อมใช้งาน
+    </motion.p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.2 }}
+      className="flex gap-4 mt-12"
+    >
+      <button
+        onClick={onClose}
+        className="px-10 py-4 rounded-full bg-[#5D4037] text-white text-sm font-black uppercase tracking-[0.3em] shadow-xl hover:bg-[#F4A460] transition-colors"
+      >
+        เริ่มสำรวจ →
+      </button>
+    </motion.div>
+  </div>
+);
 
-  {
-    type: 'preview-dual-shop',
-    shopIds: ['blacksmith', 'general_store'],
-    cursor: { x: '60vw', y: '45vh', opacity: 1, click: true },
-    cursorLabel: 'Open schedule',
-    duration: 5000
-  },
+// ─── Cursor ───────────────────────────────────────────────────────────────────
+const Cursor = ({ x, y, visible, clicking }) => (
+  <div
+    style={{
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      transform: `translate(${x}px, ${y}px)`,
+      transition: 'transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1)',
+      pointerEvents: 'none',
+      zIndex: 10500,
+      opacity: visible ? 1 : 0,
+    }}
+  >
+    <svg width="32" height="38" viewBox="0 0 28 36" style={{ display: 'block', position: 'absolute', left: -3, top: -2, filter: 'drop-shadow(0 4px 12px rgba(93,64,55,0.4)) drop-shadow(0 0 12px rgba(255,255,255,0.5))' }}>
+      <path d="M3 2 L3 26 L8.5 22 L12 31 L15.5 29.5 L12 21 L19 21 Z" fill="#FFFFFF" stroke="#5D4037" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+    {clicking && (
+      <motion.div
+        initial={{ width: 6, height: 6, opacity: 0.9, borderWidth: 3, margin: -3 }}
+        animate={{ width: 80, height: 80, opacity: 0, borderWidth: 0.5, margin: -40 }}
+        transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          borderRadius: '50%',
+          border: '3px solid #F4A460',
+          pointerEvents: 'none',
+        }}
+      />
+    )}
+  </div>
+);
 
-  // Action 3: Crop Planning
-  {
-    type: 'simulate-search',
-    text: 'strawberry',
-    label: 'Crop Profit Analysis',
-    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
-    cursorLabel: 'Calculating profit...',
-    duration: 3000
-  },
-
-  { 
-    type: 'preview-dual-crop', 
-    cropIds: ['cabbage', 'strawberry'],
-    cursor: { x: '60vw', y: '55vh', opacity: 1, click: true },
-    cursorLabel: 'Comparing yields',
-    duration: 5000,
-    transition: 'slideUp'
-  },
-  
-  {
-    type: 'preview-dual-calendar',
-    events: [{ seasonId: 'spring', eventDay: 8 }, { seasonId: 'winter', eventDay: 25 }],
-    cursor: { x: '55vw', y: '58vh', opacity: 1, click: false },
-    cursorLabel: 'Mark the date!',
-    duration: 5000,
-    transition: 'zoomIn'
-  },
-
-  // Action 5: Detailed Recipe Search with Price Breakdown
-  {
-    type: 'simulate-search',
-    text: 'dorayaki',
-    label: 'Secret Recipe Finder',
-    cursor: { x: '50vw', y: '42vh', opacity: 1, click: false },
-    duration: 3000
-  },
-
-  { 
-    type: 'preview-recipe-detail', 
-    recipeId: 'dorayaki', 
-    cursor: { x: '50vw', y: '60vh', opacity: 1, click: true },
-    cursorLabel: 'Check potential profit',
-    duration: 7000,
-    transition: 'sideSlide'
-  },
-
-  // --- Final Text Scenes ---
-  { type: 'text-reveal', content: 'ข้อมูลครบถ้วน แม่นยำ', duration: 2000, bgIcon: '📚', transition: 'zoomIn' },
-  { type: 'text-reveal', content: 'อัปเดตตลอดเวลา', duration: 2000, bgIcon: '✨', transition: 'slideUp' },
-  { type: 'text-reveal', content: 'MINIMAL DESIGN', duration: 2000, transition: 'zoomIn' },
-
-  { type: 'cta', content: 'DORAEMON SoS', sub: 'WIKI DATABASE', description: 'Let\'s start your adventure' }
-];
-
+// ─── Main Component ───────────────────────────────────────────────────────────
 const ShowcaseReel = ({ onFinish }) => {
-  const [currentScene, setCurrentScene] = useState(0);
-  const [flash, setFlash] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [sceneId, setSceneId] = useState(null);
+  const [frameNo, setFrameNo] = useState('00');
+  const [frameTag, setFrameTag] = useState('INTRO');
+  const [frameCap, setFrameCap] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [recTime, setRecTime] = useState('00:00');
+  const [speedIdx, setSpeedIdx] = useState(0);
+  const [flashOn, setFlashOn] = useState(false);
+  const [letterbox, setLetterbox] = useState(false);
 
-  const scene = SCENES[currentScene];
+  // cursor
+  const [cx, setCx] = useState(-200);
+  const [cy, setCy] = useState(-200);
+  const [cVisible, setCVisible] = useState(false);
+  const [cClick, setCClick] = useState(false);
 
-  // Logic สำหรับการเปลี่ยนฉากอัตโนมัติ
-  useEffect(() => {
-    if (currentScene < SCENES.length - 1) {
-      const timer = setTimeout(() => {
-        setFlash(true);
-        setCurrentScene((prev) => prev + 1);
-        setTimeout(() => setFlash(false), 200);
-      }, SCENES[currentScene].duration || 2000);
-      return () => clearTimeout(timer);
-    } else if (currentScene === SCENES.length - 1 && SCENES[currentScene].type !== 'cta') {
-      const timer = setTimeout(onFinish, SCENES[currentScene].duration || 2000);
-      return () => clearTimeout(timer);
+  // scene-specific state
+  const [charFilter, setCharFilter] = useState('ทั้งหมด');
+  const [highlightChar, setHighlightChar] = useState(null);
+  const [detailChar, setDetailChar] = useState('shizuka');
+  const [fertId, setFertId] = useState('none');
+  const [highlightCropRow, setHighlightCropRow] = useState(null);
+  const [highlightRecipe, setHighlightRecipe] = useState(null);
+  const [detailRecipeId, setDetailRecipeId] = useState('dorayaki');
+
+  const playingRef = useRef(false);
+  const speedRef = useRef(1);
+  const progTimerRef = useRef(null);
+  const startTsRef = useRef(0);
+  const TOTAL_MS = 60000;
+
+  const wait = useCallback(
+    (ms) => new Promise((r) => setTimeout(r, Math.max(20, ms / speedRef.current))),
+    []
+  );
+
+  const doFlash = useCallback(async () => {
+    setFlashOn(true);
+    await new Promise((r) => setTimeout(r, 70));
+    setFlashOn(false);
+  }, []);
+
+  const goScene = useCallback(
+    async (id, no, tag, cap) => {
+      if (!playingRef.current) return;
+      await doFlash();
+      setSceneId(id);
+      setFrameNo(no);
+      setFrameTag(tag);
+      setFrameCap(cap || '');
+    },
+    [doFlash]
+  );
+
+  const moveCursor = useCallback(async (x, y) => {
+    if (!playingRef.current) return;
+    setCVisible(true);
+    setCx(x);
+    setCy(y);
+    await new Promise((r) => setTimeout(r, Math.max(30, 550 / speedRef.current)));
+  }, []);
+
+  const click = useCallback(async (x, y) => {
+    if (!playingRef.current) return;
+    setCx(x);
+    setCy(y);
+    await new Promise((r) => setTimeout(r, Math.max(20, 380 / speedRef.current)));
+    setCClick(true);
+    await new Promise((r) => setTimeout(r, Math.max(20, 180 / speedRef.current)));
+    setCClick(false);
+    await new Promise((r) => setTimeout(r, Math.max(20, 200 / speedRef.current)));
+  }, []);
+
+  const stopReel = useCallback(() => {
+    playingRef.current = false;
+    setPlaying(false);
+    setSceneId(null);
+    setLetterbox(false);
+    setCVisible(false);
+    setProgress(0);
+    setCharFilter('ทั้งหมด');
+    setHighlightChar(null);
+    setFertId('none');
+    setHighlightCropRow(null);
+    setHighlightRecipe(null);
+    if (progTimerRef.current) clearInterval(progTimerRef.current);
+  }, []);
+
+  const playReel = useCallback(async () => {
+    if (playingRef.current) return stopReel();
+    playingRef.current = true;
+    setPlaying(true);
+    setLetterbox(true);
+    setProgress(0);
+    startTsRef.current = performance.now();
+
+    if (progTimerRef.current) clearInterval(progTimerRef.current);
+    progTimerRef.current = setInterval(() => {
+      const elapsed = performance.now() - startTsRef.current;
+      const pct = Math.min(100, (elapsed / (TOTAL_MS / speedRef.current)) * 100);
+      setProgress(pct);
+      const sec = Math.floor(elapsed / 1000);
+      setRecTime(
+        String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0')
+      );
+    }, 120);
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    // 00 — INTRO
+    await goScene('intro', '00', 'INTRO', 'Doraemon SoS · Wiki Encyclopedia');
+    await wait(2400);
+    if (!playingRef.current) return;
+
+    // 01 — CHARACTERS: filter → ร้านค้า → ทั้งหมด → hover
+    await goScene('chars', '01', 'CHARACTERS', 'ตัวละคร 6 คน · กรองตามหมวดหมู่');
+    await wait(600);
+    setCharFilter('ทั้งหมด');
+    setHighlightChar(null);
+    // click "ร้านค้า" filter (top-right area)
+    await moveCursor(W * 0.72, H * 0.28);
+    await click(W * 0.72, H * 0.28);
+    setCharFilter('ร้านค้า');
+    await wait(1200);
+    // click "ทั้งหมด" filter
+    await click(W * 0.55, H * 0.28);
+    setCharFilter('ทั้งหมด');
+    await wait(800);
+    // hover Shizuka (first card, top-left)
+    await moveCursor(W * 0.25, H * 0.48);
+    setHighlightChar('shizuka');
+    await wait(700);
+    // hover Doraemon (second card)
+    await moveCursor(W * 0.45, H * 0.48);
+    setHighlightChar('doraemon');
+    await wait(500);
+    if (!playingRef.current) return;
+
+    // 02 — CHARACTER DETAIL
+    await goScene('char-detail', '02', 'CHAR DETAIL', 'ชิซุกะ · วันเกิด · ของชอบ · ของเกลียด');
+    setDetailChar('shizuka');
+    setCVisible(false);
+    await wait(3200);
+    if (!playingRef.current) return;
+
+    // 03 — SEASONS + FERTILIZER
+    await goScene('seasons', '03', 'CROP PLANNER', 'ตารางเพาะปลูก · คำนวณกำไร · เลือกฤดู');
+    setFertId('none');
+    setHighlightCropRow(null);
+    await wait(800);
+    // hover crop rows
+    await moveCursor(W * 0.5, H * 0.52);
+    setHighlightCropRow(0);
+    await wait(500);
+    setHighlightCropRow(1);
+    await wait(500);
+    setHighlightCropRow(null);
+    // click fertilizer "ปุ๋ยเร่ง"
+    await moveCursor(W * 0.61, H * 0.4);
+    await click(W * 0.61, H * 0.4);
+    setFertId('speed');
+    await wait(1800);
+    // click "ปุ๋ยคุณภาพ"
+    await moveCursor(W * 0.72, H * 0.4);
+    await click(W * 0.72, H * 0.4);
+    setFertId('quality');
+    await wait(1200);
+    await click(W * 0.44, H * 0.4);
+    setFertId('none');
+    await wait(800);
+    if (!playingRef.current) return;
+
+    // 04 — RECIPES
+    await goScene('recipes', '04', 'RECIPES', 'สูตรอาหาร · วัตถุดิบ · กำไรสุทธิ');
+    setHighlightRecipe(null);
+    await wait(600);
+    // hover recipes
+    await moveCursor(W * 0.33, H * 0.45);
+    setHighlightRecipe('dorayaki');
+    await wait(800);
+    setHighlightRecipe('curry');
+    await moveCursor(W * 0.62, H * 0.45);
+    await wait(500);
+    setHighlightRecipe('smoothie');
+    await moveCursor(W * 0.33, H * 0.65);
+    await wait(500);
+    // click dorayaki
+    setHighlightRecipe('dorayaki');
+    await click(W * 0.33, H * 0.45);
+    if (!playingRef.current) return;
+
+    // 05 — RECIPE DETAIL
+    await goScene('recipe-detail', '05', 'RECIPE DETAIL', 'โดรายากิ · วัตถุดิบ · กำไร +350G');
+    setDetailRecipeId('dorayaki');
+    setCVisible(false);
+    await wait(3800);
+    if (!playingRef.current) return;
+
+    // 06 — SHOPS
+    await goScene('shops', '06', 'SHOPS', 'ตารางเวลาร้านค้า · วันหยุด · สินค้า');
+    setCVisible(false);
+    await wait(3000);
+    if (!playingRef.current) return;
+
+    // 07 — MINING
+    await goScene('mining', '07', 'MINING', 'ชั้นเหมืองแร่ · วัตถุดิบหายาก · ชั้น B1–B61+');
+    await wait(800);
+    await moveCursor(W * 0.5, H * 0.4);
+    await wait(500);
+    await moveCursor(W * 0.5, H * 0.52);
+    await wait(500);
+    await moveCursor(W * 0.5, H * 0.64);
+    await wait(500);
+    await moveCursor(W * 0.5, H * 0.76);
+    await wait(1000);
+    if (!playingRef.current) return;
+
+    // 08 — OUTRO
+    await goScene('outro', '✓', 'WRAP', '');
+    setCVisible(false);
+    await wait(3500);
+
+    if (playingRef.current) {
+      playingRef.current = false;
+      setPlaying(false);
+      setLetterbox(false);
+      if (progTimerRef.current) clearInterval(progTimerRef.current);
+      setProgress(100);
     }
-  }, [currentScene, onFinish]);
+  }, [wait, goScene, moveCursor, click, stopReel]);
 
-  const handleClose = () => {
-    setTimeout(onFinish, 500);
-  };
+  // speed sync
+  useEffect(() => {
+    speedRef.current = SPEEDS[speedIdx].x;
+  }, [speedIdx]);
 
-  // การตั้งค่าอนิเมชันตอนเปลี่ยนฉาก
-  const transitionVariants = {
-    slideUp: { initial: { opacity: 0, y: 100 }, animate: { opacity: 1, y: 0 } },
-    zoomIn: { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 1, scale: 1 } },
-    sideSlide: { initial: { opacity: 0, x: 200 }, animate: { opacity: 1, x: 0 } }
-  };
-
-  const currentVariant = transitionVariants[scene.transition] || transitionVariants.slideUp;
+  // cleanup on unmount
+  useEffect(() => () => {
+    playingRef.current = false;
+    if (progTimerRef.current) clearInterval(progTimerRef.current);
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-[#FFFDF5] flex items-center justify-center overflow-hidden font-black uppercase">
-      {/* เอฟเฟกต์แฟลชตอนเปลี่ยนฉาก */}
-      <AnimatePresence>
-        {flash && (
-          <motion.div initial={{ opacity: 1 }} animate={{ opacity: 0 }} className="absolute inset-0 bg-white z-[12000] pointer-events-none" />
-        )}
-      </AnimatePresence>
+    <div
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center overflow-hidden"
+      style={{ background: '#FFF9F0', fontFamily: "'Inter', sans-serif" }}
+    >
+      {/* Flash */}
+      {flashOn && (
+        <div className="absolute inset-0 bg-white z-[11000] pointer-events-none opacity-80" />
+      )}
 
-      <DynamicBackground />
+      {/* Letterbox */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none z-[10200] transition-all duration-700"
+        style={{ height: letterbox ? 32 : 0, background: '#3D2B24' }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none z-[10200] transition-all duration-700"
+        style={{ height: letterbox ? 32 : 0, background: '#3D2B24' }}
+      />
 
-      <button 
-        onClick={handleClose}
-        className="absolute top-10 right-10 text-[10px] tracking-[0.4em] text-[#5D4037]/40 hover:text-[#5D4037] transition-all z-50 px-5 py-2 border border-[#5D4037]/10 rounded-full hover:bg-[#5D4037] hover:text-[#FFF9F0]"
-      >
-        SKIP REEL
-      </button>
-
-      <AnimatePresence mode="popLayout">
-        {/* แสดงผลตามประเภทของฉาก */}
-        {scene.type === 'simulate-search' && (
-          <motion.div key={`search-${currentScene}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} className="relative z-10 flex justify-center w-full">
-            <SearchSimulation text={scene.text} label={scene.label} />
-          </motion.div>
-        )}
-
-        {scene.type === 'hero-reveal' && (
-          <motion.div key={`hero-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, scale: 2, filter: 'blur(20px)' }} variants={currentVariant} className="text-center relative z-10 px-4">
-            <TextReveal text={scene.content} className={`text-5xl md:text-[100px] leading-tight ${scene.highlight ? 'text-[#F4A460]' : 'text-[#5D4037]'}`} />
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ delay: 1 }} className="text-[#5D4037] text-xl md:text-2xl tracking-[1em] mt-8">
-              {scene.sub}
-            </motion.p>
-          </motion.div>
-        )}
-
-        {scene.type === 'text-reveal' && (
-          <motion.div key={`text-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, y: -50 }} variants={currentVariant} className="text-center relative z-10">
-            {scene.bgIcon && (
-              <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.1, scale: 1.5 }} className="absolute inset-0 -z-10 flex items-center justify-center text-[25rem]">
-                {scene.bgIcon}
-              </motion.div>
-            )}
-            <TextReveal text={scene.content} className="text-5xl md:text-7xl text-[#5D4037] font-black tracking-tight" />
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-character' && (
-          <motion.div key="dual-char-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, x: -100 }} className="flex flex-wrap justify-center gap-8 relative z-10">
-            {scene.charIds.map((charId, index) => {
-              const char = MOCK_CHARACTERS[charId];
-              if (!char) return null;
-              return (
-                <motion.div key={charId} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.2 }} className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80">
-                  <div className="flex items-center gap-6 mb-6">
-                    <div className="w-20 h-20 flex items-center justify-center text-5xl rounded-3xl" style={{ backgroundColor: `${char.color}20` }}>{char.portrait}</div>
-                    <div className="min-w-0">
-                      <h3 className="text-2xl font-black text-[#5D4037] leading-none mb-2">{char.name}</h3>
-                      <span className="text-xs font-bold text-[#F4A460] uppercase tracking-widest">🎂 {char.birthday}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <p className="text-sm text-[#5D4037]/70 italic leading-relaxed line-clamp-2">"{char.bio}"</p>
-                    <div className="pt-4 border-t border-[#F3DCC1]/50">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#5D4037]/40 mb-2">Favorite Item</p>
-                      <p className="text-base font-bold text-[#5D4037]">⭐ {char.specialFavorite}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-shop' && (
-          <motion.div key="dual-shop-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.8 }} className="flex flex-wrap justify-center gap-8 relative z-10">
-            {scene.shopIds.map((shopId, index) => {
-              const shop = MOCK_SHOPS[shopId];
-              if (!shop) return null;
-              return (
-                <motion.div 
-                  key={shopId}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.3 }}
-                  className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80 text-center"
-                >
-                  <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-6xl block mb-6">{shop.icon}</motion.span>
-                  <h3 className="text-2xl font-black text-[#5D4037] mb-2">{shop.name}</h3>
-                  <div className="bg-[#FAF9F6] py-3 rounded-2xl border border-[#F3DCC1]/50 mt-4">
-                    <p className="text-xs font-bold text-[#F4A460] uppercase tracking-widest">⏰ {shop.hours}</p>
-                    <p className="text-[9px] text-[#5D4037]/40 mt-1">ปิดทุกวัน{shop.closed}</p>
-                  </div>
-                  <p className="text-[10px] text-[#5D4037]/60 mt-4 font-bold uppercase tracking-tighter">
-                    สินค้า: {shop.items.slice(0, 2).join(', ')}...
-                  </p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-crop' && (
-          <motion.div key="dual-crop-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, y: -100 }} className="flex flex-wrap justify-center gap-8 relative z-10">
-            {scene.cropIds.map((cropId, index) => {
-              const crop = MOCK_CROPS[cropId];
-              if (!crop) return null;
-              return (
-                <motion.div 
-                  key={cropId}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.3 }}
-                  className="bg-white border-4 border-[#82A07D]/20 rounded-[40px] p-8 shadow-2xl w-[420px]"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                      <span className="text-6xl">{crop.icon}</span>
-                      <div className="flex flex-col">
-                        <h4 className="text-xl font-black text-[#1A1A1A]">{crop.name}</h4>
-                        <span className="text-[10px] font-bold text-[#8C7E6A] mt-1">⏱️ ใช้เวลาโต {crop.growDays} วัน</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-3xl font-black text-[#82A07D]">{crop.profitPerDay}</span>
-                      <p className="text-[8px] font-bold uppercase text-[#8C7E6A]/50">G / Day</p>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-dual-calendar' && (
-          <motion.div key="dual-calendar" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.8 }} className="flex items-center gap-8 relative z-10">
-            {scene.events.map((evt, idx) => {
-              const seasonInfo = MOCK_EVENTS[evt.seasonId];
-              if (!seasonInfo) return null;
-              return (
-                <div key={idx} className="bg-white border-2 border-[#F3DCC1] rounded-[40px] p-8 shadow-2xl w-80 text-center">
-                  <h3 className="text-2xl font-black text-[#5D4037] mb-6">{seasonInfo.name} {seasonInfo.icon}</h3>
-                  <div className="grid grid-cols-7 gap-3 mb-4">
-                    {Array.from({ length: 7 }, (_, i) => i + 1).map(day => (
-                      <span key={day} className={cn("w-8 h-8 rounded-full flex items-center justify-center text-[10px]", day === evt.eventDay ? "bg-[#F4A460] text-white font-black" : "text-[#5D4037]/20 border border-transparent")}>
-                        {day}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-sm font-bold text-[#F4A460]">🎂 Day {evt.eventDay}</p>
-                </div>
-              );
-            })}
-          </motion.div>
-        )}
-
-        {scene.type === 'preview-recipe-detail' && (
-          <motion.div key={`recipe-detail-${scene.recipeId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10">
-            {(() => {
-              const recipe = MOCK_RECIPES[scene.recipeId];
-              if (!recipe) return null;
-              const profit = recipe.sell - recipe.cost;
-              return (
-                <div className="bg-[#FCFBF7] border-4 border-[#8C7E6A]/20 p-8 shadow-2xl rounded-[40px] w-[400px] text-center">
-                  <span className="text-7xl block mb-4">{recipe.icon}</span>
-                  <h3 className="text-3xl font-black text-[#1A1A1A] mb-1">{recipe.name}</h3>
-                  <p className="text-[10px] font-bold text-[#8C7E6A] uppercase mb-6 tracking-widest">{recipe.equipment}</p>
-                  <div className="space-y-3 bg-[#F3DCC1]/10 p-5 rounded-3xl border border-[#F3DCC1]/30">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-[#5D4037]/60">ราคาขาย</span>
-                      <span className="font-bold text-[#E97451]">{recipe.sell.toLocaleString()} G</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-[#5D4037]/60">ต้นทุนวัตถุดิบ</span>
-                      <span className="text-[#5D4037]/80">{recipe.cost.toLocaleString()} G</span>
-                    </div>
-                    <div className="h-[1px] bg-[#1A1A1A]/10 my-2"></div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-black uppercase text-[#82A07D]">กำไรสุทธิ</span>
-                      <span className="text-2xl font-black text-[#82A07D]">+{profit.toLocaleString()} G</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-          </motion.div>
-        )}
-
-        {scene.type === 'cta' && (
+      {/* Progress bar */}
+      {playing && (
+        <div className="absolute top-0 left-0 right-0 h-[3px] z-[10300] pointer-events-none">
           <motion.div
-            key="cta"
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="flex flex-col items-center text-center space-y-12 relative z-10"
+            className="h-full"
+            style={{
+              width: `${progress}%`,
+              background: 'linear-gradient(90deg, #82A07D, #F4A460, #FF8AAE)',
+              boxShadow: '0 0 14px rgba(244,164,96,0.5)',
+              transition: 'width 0.25s linear',
+            }}
+          />
+        </div>
+      )}
+
+      {/* Top bar — hidden while playing */}
+      <div
+        className="absolute top-0 left-0 right-0 h-20 flex items-center px-8 z-[10250] transition-all duration-500"
+        style={{
+          background: 'rgba(255,249,240,0.85)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid #F3DCC1',
+          opacity: playing ? 0 : 1,
+          transform: playing ? 'translateY(-100%)' : 'translateY(0)',
+          pointerEvents: playing ? 'none' : 'auto',
+        }}
+      >
+        <div className="font-black text-lg uppercase tracking-[0.25em] text-[#5D4037]">
+          Doraemon <span className="font-light text-[#F4A460]">SoS</span>
+        </div>
+        <div className="ml-4 font-mono text-[10px] font-bold text-[#FF8AAE] bg-[#FFE9F0] px-3 py-1.5 rounded-md tracking-[0.12em] uppercase">
+          Showcase Reel
+        </div>
+        <div className="ml-auto flex items-center gap-3">
+          <button
+            onClick={() => setSpeedIdx((i) => (i + 1) % SPEEDS.length)}
+            className="h-9 px-4 rounded-xl bg-white border border-[#F3DCC1] font-mono text-[11px] font-bold text-[#5D4037]/50 hover:border-[#5D4037] hover:text-[#5D4037] transition-all"
           >
-            <div className="space-y-6">
-              <h2 className="text-6xl md:text-9xl text-[#5D4037] tracking-tighter leading-none">{scene.content}</h2>
-              <p className="text-[#F4A460] tracking-[0.6em] text-lg font-bold">{scene.sub}</p>
-              {scene.description && (
-                <p className="text-sm text-[#5D4037]/70 italic mt-4 max-w-md mx-auto normal-case font-medium">{scene.description}</p>
-              )}
+            {SPEEDS[speedIdx].label}
+          </button>
+          <button
+            onClick={playReel}
+            className="flex items-center gap-3 h-11 px-6 rounded-full bg-[#5D4037] text-white font-black text-sm tracking-wide shadow-lg hover:bg-[#F4A460] transition-colors"
+          >
+            <span className="w-5 h-5 rounded-full bg-[#82A07D] flex items-center justify-center text-[9px]">▶</span>
+            เล่น Reel
+          </button>
+        </div>
+      </div>
+
+      {/* Playing chrome */}
+      {playing && (
+        <>
+          {/* Frame number */}
+          <div className="absolute top-10 left-10 z-[10280] flex items-baseline gap-3" style={{ pointerEvents: 'none' }}>
+            <span
+              className="font-black leading-none tracking-[-0.03em]"
+              style={{
+                fontSize: 64,
+                background: 'linear-gradient(135deg, #82A07D, #F4A460, #FF8AAE)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {frameNo}
+            </span>
+            <span className="font-mono text-[11px] font-bold text-[#5D4037]/30 uppercase tracking-[0.2em]">/ 08</span>
+          </div>
+
+          {/* Frame tag + REC */}
+          <div className="absolute top-10 right-10 z-[10280] flex items-center gap-3" style={{ pointerEvents: 'none' }}>
+            <span className="font-mono text-[11px] font-bold text-[#5D4037] bg-white border border-[#F3DCC1] px-3 py-2 rounded-full uppercase tracking-[0.22em] shadow-sm">
+              {frameTag}
+            </span>
+            <span
+              className="flex items-center gap-2 font-mono text-[10.5px] font-bold text-white px-3 py-2 rounded-full tracking-[0.18em] uppercase"
+              style={{ background: 'rgba(61,43,36,0.85)', backdropFilter: 'blur(16px)' }}
+            >
+              <span
+                className="w-[7px] h-[7px] rounded-full bg-[#FF5577]"
+                style={{ animation: 'pulse 1.2s infinite' }}
+              />
+              REC <span style={{ marginLeft: 6 }}>{recTime}</span>
+            </span>
+          </div>
+
+          {/* Caption */}
+          {frameCap && (
+            <div
+              className="absolute z-[10280] flex items-center gap-3 font-medium text-[13.5px] text-[#5D4037] rounded-full px-6 py-3 border border-[#F3DCC1]"
+              style={{
+                bottom: 52,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(255,249,240,0.88)',
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 4px 20px rgba(93,64,55,0.08)',
+                pointerEvents: 'none',
+                maxWidth: '80vw',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span
+                className="w-[6px] h-[6px] rounded-full bg-[#82A07D] flex-shrink-0"
+                style={{ boxShadow: '0 0 10px #82A07D' }}
+              />
+              {frameCap}
             </div>
-            
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleClose}
-              className="px-16 py-6 bg-[#5D4037] text-[#FFF9F0] rounded-full text-sm font-black tracking-[0.5em] shadow-2xl hover:bg-[#F4A460] transition-colors"
-            > 
-              START EXPLORING
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+
+          {/* Stop button */}
+          <button
+            onClick={stopReel}
+            className="absolute bottom-10 right-10 z-[10280] font-mono text-[11px] font-bold text-white px-5 py-2.5 rounded-full uppercase tracking-[0.14em] border border-white/10 transition-colors hover:bg-[#FF5577] hover:border-[#FF5577]"
+            style={{ background: 'rgba(61,43,36,0.85)', backdropFilter: 'blur(16px)' }}
+          >
+            ■ STOP
+          </button>
+
+          {/* Speed (while playing) */}
+          <button
+            onClick={() => setSpeedIdx((i) => (i + 1) % SPEEDS.length)}
+            className="absolute bottom-10 left-10 z-[10280] font-mono text-[11px] font-bold text-white/60 px-4 py-2.5 rounded-full uppercase tracking-[0.1em] border border-white/10 hover:text-white transition-colors"
+            style={{ background: 'rgba(61,43,36,0.7)', backdropFilter: 'blur(12px)' }}
+          >
+            {SPEEDS[speedIdx].label}
+          </button>
+        </>
+      )}
+
+      {/* Ambient background */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            'radial-gradient(800px 600px at 25% 30%, rgba(130,160,125,0.08), transparent 60%), radial-gradient(600px 500px at 75% 70%, rgba(244,164,96,0.07), transparent 60%)',
+        }}
+      />
+
+      {/* Stage */}
+      <div className="relative z-10 w-full h-full flex items-center justify-center px-16"
+        style={{ paddingTop: playing ? 80 : 96, paddingBottom: playing ? 80 : 32 }}>
+        <AnimatePresence mode="wait">
+          {!playing && !sceneId && (
+            <motion.div
+              key="idle"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center"
+            >
+              <div className="text-8xl mb-6">📖</div>
+              <h2 className="text-5xl font-black uppercase tracking-[-0.02em] text-[#5D4037] mb-4">Encyclopedia</h2>
+              <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#5D4037]/40 mb-12">Nobita's Story of Seasons</p>
+              <button
+                onClick={playReel}
+                className="px-12 py-5 rounded-full bg-[#5D4037] text-white font-black text-sm uppercase tracking-[0.3em] shadow-2xl hover:bg-[#F4A460] transition-colors"
+              >
+                ▶ เล่น Showcase Reel
+              </button>
+            </motion.div>
+          )}
+
+          {sceneId === 'intro' && (
+            <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1 }}>
+              <SceneIntro />
+            </motion.div>
+          )}
+
+          {sceneId === 'chars' && (
+            <motion.div key="chars" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 1.05 }}>
+              <SceneChars filter={charFilter} highlighted={highlightChar} />
+            </motion.div>
+          )}
+
+          {sceneId === 'char-detail' && (
+            <motion.div key="char-detail" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, x: -60 }}>
+              <SceneCharDetail charId={detailChar} />
+            </motion.div>
+          )}
+
+          {sceneId === 'seasons' && (
+            <motion.div key="seasons" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }}>
+              <SceneSeasons fertId={fertId} highlightRow={highlightCropRow} />
+            </motion.div>
+          )}
+
+          {sceneId === 'recipes' && (
+            <motion.div key="recipes" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}>
+              <SceneRecipes highlighted={highlightRecipe} />
+            </motion.div>
+          )}
+
+          {sceneId === 'recipe-detail' && (
+            <motion.div key="recipe-detail" initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, y: -40 }}>
+              <SceneRecipeDetail recipeId={detailRecipeId} />
+            </motion.div>
+          )}
+
+          {sceneId === 'shops' && (
+            <motion.div key="shops" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }}>
+              <SceneShops />
+            </motion.div>
+          )}
+
+          {sceneId === 'mining' && (
+            <motion.div key="mining" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
+              <SceneMining />
+            </motion.div>
+          )}
+
+          {sceneId === 'outro' && (
+            <motion.div key="outro" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+              <SceneOutro onClose={() => { stopReel(); onFinish(); }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Cursor */}
+      <Cursor x={cx} y={cy} visible={cVisible} clicking={cClick} />
+
+      <style>{`
+        @keyframes pulse { 50% { opacity: 0.3; } }
+      `}</style>
     </div>
   );
 };

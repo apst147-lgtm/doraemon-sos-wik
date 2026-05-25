@@ -176,15 +176,14 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
       .sort((a, b) => b.sellPrice - a.sellPrice);
   }, [selectedSeason, deferredSearch]);
 
-  const currentMining = useMemo(() => {
-    return MINING_DATA.filter(item => 
-      deferredSearch === '' || item.name.toLowerCase().includes(deferredSearch.toLowerCase())
-    ).sort((a, b) => b.sellPrice - a.sellPrice);
-  }, [deferredSearch]);
-
   const currentEvents = useMemo(() => {
-    return SEASON_EVENTS.filter(e => e.season === selectedSeason);
-  }, [selectedSeason]);
+    return SEASON_EVENTS.filter(e => 
+      e.season === selectedSeason &&
+      (deferredSearch === '' || 
+       e.name.toLowerCase().includes(deferredSearch.toLowerCase()) ||
+       (e.target && e.target.toLowerCase().includes(deferredSearch.toLowerCase())))
+    );
+  }, [selectedSeason, deferredSearch]);
 
   return (
     <motion.div
@@ -714,10 +713,35 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
 
           {activeCategory === 'calendar' && (
             <div className="mt-8">
-              <div className="flex items-center gap-6 mb-12">
-                <h3 className="text-2xl font-black text-[#1A1A1A] uppercase tracking-tighter">Events & Birthdays</h3>
-                <div className="h-[1px] flex-1 bg-[#EBE9E4]"></div>
-              </div> 
+              <div className="flex flex-col md:flex-row md:items-center gap-6 mb-12">
+                <div className="flex items-center gap-4">
+                  <h3 className="text-2xl font-black text-[#1A1A1A] uppercase tracking-tighter">Events & Birthdays</h3>
+                  <div className="h-8 w-[1px] bg-[#EBE9E4] hidden md:block"></div>
+                </div>
+                
+                {/* ตัวกรองตัวละครด่วนสำหรับวันเกิด */}
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(new Set(SEASON_EVENTS
+                    .filter(e => e.season === selectedSeason && e.type === 'birthday')
+                    .map(e => e.target)
+                  )).map(charName => (
+                    <button
+                      key={charName}
+                      onClick={() => setSearchTerm(searchTerm === charName ? '' : charName)}
+                      className={cn(
+                        "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border",
+                        searchTerm === charName 
+                          ? "bg-[#F4A460] text-white border-[#F4A460] shadow-sm" 
+                          : "bg-white text-[#8C7E6A] border-[#EBE9E4] hover:border-[#F4A460]/50"
+                      )}
+                    >
+                      {charName}
+                    </button>
+                  ))}
+                </div>
+                <div className="h-[1px] flex-1 bg-[#EBE9E4] hidden lg:block"></div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {currentEvents.map((event, idx) => {
                   const char = event.type === 'birthday' ? getCharacterByName(event.target) : null;
@@ -744,6 +768,12 @@ const SeasonsPage = ({ onBack, onRecipeClick }) => {
                           </span>
                         </div>
                         <h4 className="text-lg font-black text-[#1A1A1A] tracking-tight">{event.name}</h4>
+                        {event.type === 'birthday' && char?.specialFavorite && (
+                          <div className="flex items-center gap-1.5 mt-1 bg-[#82A07D]/10 w-fit px-2 py-0.5 rounded-full border border-[#82A07D]/20">
+                            <span className="text-sm">{INGREDIENT_ICONS[char.specialFavorite] || '🎁'}</span>
+                            <span className="text-[9px] font-bold text-[#5D4037]">{char.specialFavorite}</span>
+                          </div>
+                        )}
                         {event.description && <p className="text-xs text-[#8C7E6A] italic">{event.description}</p>}
                       </div>
 
