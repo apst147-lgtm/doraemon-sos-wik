@@ -107,7 +107,9 @@ const STAR_RATINGS = [{ label: '0.5 ดาว', multiplier: 1 }, { label: '1 ด
  */
 const TypingEffect = ({ text, speed = 100 }) => {
   const [displayedText, setDisplayedText] = useState('');
+  
   useEffect(() => {
+    setDisplayedText(''); // Reset text when it changes
     let i = 0;
     const timer = setInterval(() => {
       setDisplayedText(text.slice(0, i + 1));
@@ -335,8 +337,8 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
       </AnimatePresence>
 
-      {/* Mouse Cursor Emulation */}
-      <MouseCursor target={scene.cursor || { opacity: 0 }} />
+      {/* Mouse Cursor with dynamic label */}
+      <MouseCursor target={scene.cursor || { opacity: 0 }} label={scene.cursorLabel} />
 
       {/* Skip Button */}
       <button 
