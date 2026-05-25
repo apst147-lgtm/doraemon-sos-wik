@@ -105,7 +105,7 @@ const STAR_RATINGS = [{ label: '0.5 ดาว', multiplier: 1 }, { label: '1 ด
  * TypingEffect Component
  * จำลองการพิมพ์ข้อความทีละตัวอักษร
  */
-const TypingEffect = ({ text, speed = 100 }) => {
+const TypingEffect = ({ text, speed = 80 }) => {
   const [displayedText, setDisplayedText] = useState('');
   
   useEffect(() => {
@@ -119,10 +119,43 @@ const TypingEffect = ({ text, speed = 100 }) => {
     return () => clearInterval(timer);
   }, [text, speed]);
 
+  return <span className="border-r-4 border-[#F4A460] pr-1 animate-pulse">{displayedText}</span>;
+};
+
+/**
+ * TextReveal Component
+ * อนิเมชันข้อความแบบ Apple-style (Blur-in & Stagger)
+ */
+const TextReveal = ({ text, className = "" }) => {
+  const words = text.split(" ");
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
+    }),
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { type: "spring", damping: 12, stiffness: 100 },
+    },
+    hidden: {
+      opacity: 0,
+      y: 20,
+      filter: "blur(10px)",
+    },
+  };
+
   return (
-    <span className="border-r-4 border-[#F4A460] pr-1 animate-pulse">
-      {displayedText}
-    </span>
+    <motion.div className={`flex flex-wrap justify-center gap-x-[0.3em] ${className}`} variants={container} initial="hidden" animate="visible">
+      {words.map((word, index) => (
+        <motion.span key={index} variants={child}>{word}</motion.span>
+      ))}
+    </motion.div>
   );
 };
 
@@ -133,7 +166,7 @@ const TypingEffect = ({ text, speed = 100 }) => {
 const SearchSimulation = ({ text, label = "Quick Search" }) => (
   <div className="flex flex-col items-center gap-4">
     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8C7E6A] opacity-50">{label}</span>
-    <div className="bg-white border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-2xl relative overflow-hidden">
+    <div className="bg-white/80 backdrop-blur-xl border-b-4 border-[#F3DCC1] rounded-[24px] px-8 py-5 flex items-center gap-5 w-[500px] shadow-2xl relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-[#F4A460]/10" />
       <motion.span 
         animate={{ scale: [1, 1.2, 1] }} 
@@ -142,8 +175,8 @@ const SearchSimulation = ({ text, label = "Quick Search" }) => (
       >
         🔍
       </motion.span>
-      <div className="text-3xl font-light tracking-tight text-[#1A1A1A] lowercase flex-1">
-        <TypingEffect text={text} speed={80} />
+      <div className="text-3xl font-light tracking-tight text-[#1A1A1A] flex-1">
+        <TypingEffect text={text} speed={60} />
       </div>
       <motion.div 
         animate={{ opacity: [1, 0] }}
@@ -151,6 +184,34 @@ const SearchSimulation = ({ text, label = "Quick Search" }) => (
         className="w-[2px] h-8 bg-[#F4A460]" 
       />
     </div>
+  </div>
+);
+
+/**
+ * DynamicBackground Component
+ * แทนที่ตัวหนังสือหมุนๆ ด้วย Floating Bokeh
+ */
+const DynamicBackground = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+    {[...Array(6)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute rounded-full blur-[100px]"
+        style={{
+          width: `${Math.random() * 400 + 200}px`,
+          height: `${Math.random() * 400 + 200}px`,
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          backgroundColor: ['#FF8AAE', '#6BCBFF', '#F3E5AB', '#82A07D'][i % 4],
+        }}
+        animate={{
+          x: [0, Math.random() * 100 - 50, 0],
+          y: [0, Math.random() * 100 - 50, 0],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{ duration: Math.random() * 10 + 10, repeat: Infinity, ease: "linear" }}
+      />
+    ))}
   </div>
 );
 
@@ -195,14 +256,11 @@ const MouseCursor = ({ target, label }) => (
 );
 
 const SCENES = [
-  // --- 3 ซีนแรกเน้น Typography ที่ทรงพลัง ---
-  { type: 'hero-text', content: 'สวัสดี', sub: 'ชาวฟาร์ม', duration: 1000 },
-  { type: 'hero-text', content: 'นี่คือ', sub: 'GALABON WIKI', highlight: true, duration: 1000 },
-  { type: 'hero-text', content: 'บันทึก', sub: 'แห่งกัลลาบอน', highlight: true, duration: 1500 },
+  // --- 3 ซีนแรกสไตล์ Cinematic Reveal ---
+  { type: 'hero-reveal', content: 'THE ULTIMATE', sub: 'WIKI DATABASE', duration: 1200, transition: 'zoomIn' },
+  { type: 'hero-reveal', content: 'CRAFTED FOR', sub: 'NOBITA STORY OF SEASONS', highlight: true, duration: 1500, transition: 'slideUp' },
   
   // --- Simulated Actions ---
-
-  // Action 1: Search for Characters
   {
     type: 'simulate-search',
     text: 'shizuka',
@@ -253,43 +311,35 @@ const SCENES = [
     cropIds: ['cabbage', 'strawberry'],
     cursor: { x: '65vw', y: '55vh', opacity: 1, click: true },
     cursorLabel: 'Comparing yields',
-    duration: 5000 
+    duration: 5000,
+    transition: 'slideUp'
   },
   
-  // Action 4: Calendar Events
   {
     type: 'preview-dual-calendar',
     events: [{ seasonId: 'spring', eventDay: 8 }, { seasonId: 'winter', eventDay: 25 }],
-    cursor: { x: '50vw', y: '60vh', opacity: 1, click: true },
+    cursor: { x: '50vw', y: '60vh', opacity: 1, click: false },
     cursorLabel: 'Mark the date!',
-    duration: 5000 
+    duration: 5000,
+    transition: 'zoomIn'
   },
 
-  // Action 5: Detailed Recipe Search
-  {
-    type: 'simulate-search',
-    text: 'dorayaki',
-    label: 'Recipe Secret Guide',
-    cursor: { x: '50vw', y: '50vh', opacity: 1, click: false },
-    cursorLabel: 'Cooking time...',
-    duration: 3000
-  },
-
+  // Quick Reveal: Recipes
   { 
     type: 'preview-dual-modal', 
     recipeIds: ['dorayaki', 'curry'], 
     cursor: { x: '35vw', y: '50vh', opacity: 1, click: true },
     cursorLabel: 'Reveal ingredients',
-    duration: 5000 
+    duration: 5000,
+    transition: 'sideSlide'
   },
 
   // --- Final Text Scenes ---
-  { type: 'text', content: 'ข้อมูลครบถ้วน แม่นยำ', duration: 2000, bgIcon: '📚' },
-  { type: 'text', content: 'อัปเดตตลอดเวลา', duration: 2000, bgIcon: '✨' },
-  { type: 'text', content: 'ดีไซน์มินิมอล ใช้งานง่าย', duration: 2000 },
+  { type: 'text-reveal', content: 'ข้อมูลครบถ้วน แม่นยำ', duration: 2000, bgIcon: '📚', transition: 'zoomIn' },
+  { type: 'text-reveal', content: 'อัปเดตตลอดเวลา', duration: 2000, bgIcon: '✨', transition: 'slideUp' },
+  { type: 'text-reveal', content: 'MINIMAL DESIGN', duration: 2000, transition: 'zoomIn' },
 
-  // Final CTA
-  { type: 'cta', content: 'DORAEMON SoS', sub: 'WIKI DATABASE', description: 'ข้อมูลครบถ้วน แม่นยำ ใช้งานง่าย' }
+  { type: 'cta', content: 'DORAEMON SoS', sub: 'WIKI DATABASE', description: 'Let\'s start your adventure' }
 ];
 
 const ShowcaseReel = ({ onFinish }) => {
@@ -317,12 +367,23 @@ const ShowcaseReel = ({ onFinish }) => {
   const scene = SCENES[currentScene];
   const prefersReducedMotion = useReducedMotion();
 
-  // Variants สำหรับ Dynamic Transitions
-  const sceneVariants = {
-    initial: { scale: prefersReducedMotion ? 1 : 0.7, opacity: 0, y: prefersReducedMotion ? 0 : 100, rotate: prefersReducedMotion ? 0 : -5 },
-    animate: { scale: 1, opacity: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 120, damping: 14 } },
-    exit: { scale: 1.3, opacity: 0, y: -100, rotate: 5, transition: { duration: 0.2 } }
+  // Multi-type Transitions
+  const transitionVariants = {
+    slideUp: {
+      initial: { opacity: 0, y: 100 },
+      animate: { opacity: 1, y: 0 },
+    },
+    zoomIn: {
+      initial: { opacity: 0, scale: 0.8 },
+      animate: { opacity: 1, scale: 1 },
+    },
+    sideSlide: {
+      initial: { opacity: 0, x: 200 },
+      animate: { opacity: 1, x: 0 },
+    }
   };
+
+  const currentVariant = transitionVariants[scene.transition] || transitionVariants.slideUp;
 
   return (
     <div className="fixed inset-0 z-[10000] bg-[#FFF9F0] flex items-center justify-center overflow-hidden font-black uppercase">
@@ -336,6 +397,9 @@ const ShowcaseReel = ({ onFinish }) => {
           />
         )}
       </AnimatePresence>
+
+      {/* Stylish Bokeh Background */}
+      <DynamicBackground />
 
       {/* Mouse Cursor with dynamic label */}
       <MouseCursor target={scene.cursor || { opacity: 0 }} label={scene.cursorLabel} />
@@ -361,24 +425,28 @@ const ShowcaseReel = ({ onFinish }) => {
           </motion.div>
         )}
 
-        {scene.type === 'hero-text' && (
-          <motion.div
-            key={`hero-${currentScene}`}
-            initial={{ scale: prefersReducedMotion ? 1 : 0.5, opacity: 0, rotateX: prefersReducedMotion ? 0 : 90, y: prefersReducedMotion ? 0 : 50 }}
-            animate={{ scale: 1, opacity: 1, rotateX: 0, y: 0 }} // Added prefersReducedMotion
-            exit={{ scale: 2, opacity: 0, filter: 'blur(10px)' }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="text-center relative z-10"
-          >
-            <h2 className={`text-7xl md:text-[140px] leading-none ${scene.highlight ? 'text-[#F4A460]' : 'text-[#5D4037]'}`}>
-              {scene.content}
-            </h2>
-            <p className="text-[#5D4037]/40 text-2xl tracking-[0.8em] mt-4">{scene.sub}</p>
+        {scene.type === 'hero-reveal' && (
+          <motion.div key={`hero-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, scale: 2, filter: 'blur(20px)' }} variants={currentVariant} className="text-center relative z-10 px-4">
+            <TextReveal text={scene.content} className={`text-6xl md:text-[110px] leading-none ${scene.highlight ? 'text-[#F4A460]' : 'text-[#5D4037]'}`} />
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ delay: 1 }} className="text-[#5D4037] text-xl md:text-2xl tracking-[1em] mt-8">
+              {scene.sub}
+            </motion.p>
+          </motion.div>
+        )}
+
+        {scene.type === 'text-reveal' && (
+          <motion.div key={`text-${currentScene}`} initial="initial" animate="animate" exit={{ opacity: 0, y: -50 }} variants={currentVariant} className="text-center relative z-10">
+            {scene.bgIcon && (
+              <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.1, scale: 1.5 }} className="absolute inset-0 -z-10 flex items-center justify-center text-[25rem]">
+                {scene.bgIcon}
+              </motion.div>
+            )}
+            <TextReveal text={scene.content} className="text-5xl md:text-8xl text-[#5D4037] font-black lowercase tracking-tighter" />
           </motion.div>
         )}
 
         {scene.type === 'preview-character' && (
-          <motion.div key={`char-card-${scene.charId}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10">
+          <motion.div key={`char-card-${scene.charId}`} variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, scale: 0.5 }} className="flex flex-col items-center relative z-10">
             {/* Use MOCK_CHARACTERS data */}
             {(() => {
               const char = MOCK_CHARACTERS[scene.charId];
@@ -412,7 +480,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-character' && (
-          <motion.div key="dual-char-card" variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key="dual-char-card" variants={currentVariant} initial="initial" animate="animate" exit={{ opacity: 0, x: -100 }} className="flex items-center gap-8 relative z-10">
             {scene.charIds.map((charId, index) => {
               const char = MOCK_CHARACTERS[charId];
               if (!char) return null;
@@ -451,7 +519,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-shop' && (
-          <motion.div key={`shop-card-${scene.shopId}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
+          <motion.div key={`shop-card-${scene.shopId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
             {(() => {
               const shop = MOCK_SHOPS[scene.shopId];
               if (!shop) return null;
@@ -473,7 +541,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-shop' && (
-          <motion.div key={`dual-shop-card-${scene.shopIds.join('-')}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key={`dual-shop-card-${scene.shopIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {(() => {
               return scene.shopIds.map((shopId, index) => {
                 const shop = MOCK_SHOPS[shopId];
@@ -503,7 +571,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-crop' && (
-          <motion.div key={`crop-card-${scene.cropId}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
+          <motion.div key={`crop-card-${scene.cropId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
             {(() => {
               const crop = MOCK_CROPS[scene.cropId];
               if (!crop) return null;
@@ -532,7 +600,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-crop' && (
-          <motion.div key={`dual-crop-card-${scene.cropIds.join('-')}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key={`dual-crop-card-${scene.cropIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {(() => {
               return scene.cropIds.map((cropId, index) => {
                 const crop = MOCK_CROPS[cropId];
@@ -569,7 +637,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-gifts' && (
-          <motion.div key={`gifts-card-${scene.charId}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
+          <motion.div key={`gifts-card-${scene.charId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
             {(() => {
               const char = MOCK_CHARACTERS[scene.charId];
               if (!char) return null;
@@ -599,7 +667,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-gifts' && (
-          <motion.div key={`dual-gifts-card-${scene.charIds.join('-')}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key={`dual-gifts-card-${scene.charIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {scene.charIds.map((charId, index) => {
               const char = MOCK_CHARACTERS[charId];
               if (!char) return null;
@@ -635,7 +703,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-mixer' && (
-          <motion.div key={`mixer-grid-${scene.equipment}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
+          <motion.div key={`mixer-grid-${scene.equipment}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
             <div className="flex items-center gap-4 mb-8 bg-[#5D4037] text-white px-6 py-2 rounded-full text-xs tracking-widest">
               <span>{MOCK_RECIPES[scene.recipes[0]]?.equipment === 'เครื่องปั่น' ? '🥣' : '🍳'} {scene.equipment}</span>
             </div>
@@ -655,7 +723,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-mixer' && (
-          <motion.div key={`dual-mixer-grid-${scene.recipes.join('-')}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key={`dual-mixer-grid-${scene.recipes.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {scene.recipes.map((recipeId, index) => {
               const recipe = MOCK_RECIPES[recipeId];
               if (!recipe) return null;
@@ -677,7 +745,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-tooltip' && (
-          <motion.div key={`tooltip-ui-${scene.itemId}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
+          <motion.div key={`tooltip-ui-${scene.itemId}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center relative z-10 text-center">
             {(() => {
               const item = MOCK_ITEMS[scene.itemId];
               if (!item) return null;
@@ -702,7 +770,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-tooltip' && (
-          <motion.div key={`dual-tooltip-${scene.itemIds.join('-')}`} variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-20 relative z-10">
+          <motion.div key={`dual-tooltip-${scene.itemIds.join('-')}`} variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-20 relative z-10">
             {scene.itemIds.map((itemId, idx) => {
               const item = MOCK_ITEMS[itemId];
               if (!item) return null;
@@ -722,7 +790,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-calendar' && (
-          <motion.div key="dual-calendar" variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key="dual-calendar" variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {scene.events.map((evt, idx) => {
               const seasonInfo = MOCK_EVENTS[evt.seasonId];
               if (!seasonInfo) return null;
@@ -744,7 +812,7 @@ const ShowcaseReel = ({ onFinish }) => {
         )}
 
         {scene.type === 'preview-dual-modal' && (
-          <motion.div key="dual-modal" variants={sceneVariants} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
+          <motion.div key="dual-modal" variants={currentVariant} initial="initial" animate="animate" exit="exit" className="flex items-center gap-8 relative z-10">
             {scene.recipeIds.map((id, idx) => {
               const recipe = MOCK_RECIPES[id];
               if (!recipe) return null;
@@ -763,23 +831,6 @@ const ShowcaseReel = ({ onFinish }) => {
                 </div>
               );
             })}
-          </motion.div>
-        )}
-
-        {scene.type === 'text' && (
-          <motion.div key={`text-${currentScene}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 1.2 }} className="text-center relative z-10">
-            {scene.bgIcon && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 0.05, scale: 1.5 }}
-                className="absolute inset-0 -z-10 flex items-center justify-center text-[20rem] select-none pointer-events-none"
-              >
-                {scene.bgIcon}
-              </motion.div>
-            )}
-            <h3 className="text-4xl md:text-6xl text-[#5D4037] font-black lowercase tracking-tighter">
-              <TypingEffect text={scene.content} speed={50} />
-            </h3>
           </motion.div>
         )}
 
